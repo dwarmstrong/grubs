@@ -1,0 +1,319 @@
+#!/bin/bash
+
+set -e
+
+NAME="GRUBS"
+DESCRIPTION="GRUBS Reanimated USB Boot Stick"
+AUTHOR="Daniel Wayne Armstrong <daniel@circuidipity.com>"
+DEVICE=$1
+## -------------- MODIFY -------------- ##
+## Location of Linux iso images
+ISODIR="$HOME/grubs/iso"
+## GRUB config for the USB stick
+CONFIG="$HOME/grubs/grub.cfg"
+## ------------------------------------ ##
+
+penguinista() {
+cat << _EOF_
+
+(O<
+(/)_
+_EOF_
+}
+
+short_description() {
+printf "\n$( penguinista ) .: $NAME -- $DESCRIPTION :.\n"
+}
+
+long_description() {
+cat << _EOF_
+
+SYNOPSIS
+    grubs [DEVICE]
+EXAMPLE
+    Prepare USB stick /dev/sdb1
+        $ sudo grubs sdb1
+
+Howdy! $NAME transforms a standard USB stick into a dual-purpose device that is
+both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot
+device packing multiple Linux distros.
+
+See: "Transform a USB stick into a boot device packing multiple Linux distros"
+http://www.circuidipity.com/multi-boot-usb.html
+
+### WARNING ###
+Make careful note of the drive and partition labels on your system!
+
+You have chosen '$DEVICE' as DEVICE.
+
+The INSTALL option will **destroy all data** currently stored on $DEVICE.
+
+This script should be run with ROOT privileges. Please check it before use in
+a text editor and make any required modifications.
+
+_EOF_
+}
+
+invalid_reply() {
+printf "\n'$REPLY' is invalid input ...\n"
+}
+
+invalid_reply_yn() {
+printf "\n'$REPLY' is invalid input. Please select 'Y(es)' or 'N(o)' ...\n"
+}
+
+confirm_start() {
+while :
+do
+    read -n 1 -p "Run script now? [yN] > "
+    if [[ $REPLY == [yY] ]]
+    then
+        printf "\nLet's roll then ...\n"
+        break
+    elif [[ $REPLY == [nN] || $REPLY == "" ]]
+    then
+        penguinista
+        exit
+    else
+        invalid_reply_yn
+    fi
+done
+}
+
+hello_world() {
+short_description
+long_description
+confirm_start
+}
+
+test_root() {
+if [[ $UID -ne 0 ]]
+then
+    printf \
+        "\n$( penguinista ) .: $NAME requires ROOT privileges to do its job.\n"
+    exit
+fi
+}
+
+test_device() {
+if [[ -z "$DEVICE" ]]
+then
+    printf "\n$( penguinista ) .: $NAME requires the DEVICE argument.\n"
+    exit
+elif [[ -b "/dev/$DEVICE" ]] && [[ "$DEVICE" == sd[b-z]1 ]]
+then
+    : 
+else
+    printf "\n$( penguinista ) .: '$DEVICE' is not available for use.\n"
+    printf "DEVICE argument must be a 'sd[b-z]1' string.\n"
+    exit
+fi
+}
+
+test_variable() {
+if [[ -d "$ISODIR" ]]
+then
+    :
+else
+    printf "\n$( penguinista ) .: '$ISODIR' is not a valid location.\n"
+    printf "Please open $NAME in a text editor and modify variable ISODIR.\n"
+    exit
+fi
+if [[ -e "$CONFIG" ]]
+then
+    :
+else
+    printf "\n$( penguinista ) .: '$CONFIG' is not a valid file.\n"
+    printf "Please open $NAME in a text editor and modify variable CONFIG.\n"
+    exit
+fi
+}
+
+test_mount() {
+## A test to ensure that our modification are
+## going to '/MOUNTPOINT/boot' NOT '/boot'
+local MNT
+MNT=$(mount | grep $DEVICE | awk '{print $3}')
+if [[ "$MNT/boot" == "/boot" ]]
+then
+    printf \
+        "\n$( penguinista ) .: DESTINATION is the root directory... Abort!\n"
+    exit
+fi
+}
+
+test_condition() {
+test_root
+test_device
+test_variable
+}
+
+mountdir() {
+set +e
+local MULTIMNT
+MULTIMNT="/mnt"
+mount | grep /dev/$DEVICE >/dev/null
+if [ "$?" -eq "0" ]
+then
+    :
+else
+    mount | grep $MULTIMNT >/dev/null
+    if [ "$?" -eq "0" ]
+    then
+        printf "\n$( penguinista ) .: '/mnt' is not available for use.\n"
+        printf "Please unmount any devices attached to /mnt and re-run $NAME\n"
+        exit
+    else
+        printf "\nOK. Mounting /dev/$DEVICE to $MULTIMNT ...\n"
+        mount -t vfat /dev/$DEVICE $MULTIMNT
+    fi
+fi
+}
+
+umountdir() {
+set +e
+mount | grep /dev/$DEVICE >/dev/null
+if [ "$?" -eq "0" ]
+then
+    printf "\nOK. Unmounting /dev/$DEVICE ...\n"
+    umount /dev/$DEVICE
+fi
+set -e
+}
+
+createdir() {
+mountdir
+test_mount
+local MNT
+MNT=$(mount | grep $DEVICE | awk '{print $3}')
+printf "\nCreating BOOT and ISO folders ...\n"
+mkdir $MNT/{boot,iso}
+printf "\n"
+}
+
+create_filesystem() {
+while :
+do
+read -n 1 -p \
+    "### WARNING ### All data will be wiped from $DEVICE! Proceed? [yN] > "
+if [[ $REPLY == [yY] ]]
+then
+    umountdir
+    printf "\nCreating FAT32 filesystem on $DEVICE ...\n"
+    mkfs.vfat -n multiboot /dev/$DEVICE
+    printf "\n"
+    break
+elif [[ $REPLY == [nN] || $REPLY == "" ]]
+then
+    printf "\nAbort install.\n"
+    penguinista
+    exit
+else
+    invalid_reply_yn
+fi
+done
+}
+
+grub_mbr() {
+local MNT
+MNT=$(mount | grep $DEVICE | awk '{print $3}')
+# Install GRUB to the Master Boot Record (MBR) of the USB device
+printf "\nInstalling GRUB to MBR of ${DEVICE:0:3} ...\n"
+grub-install --force --no-floppy --boot-directory=$MNT/boot /dev/${DEVICE:0:3}
+printf "\n"
+}
+
+grub_cfg() {
+mountdir
+test_mount
+local MNT
+MNT=$(mount | grep $DEVICE | awk '{print $3}')
+local GCONFIG
+GCONFIG="$MNT/boot/grub/grub.cfg"
+printf "\nCopying grub.cfg ...\n"
+if [[ -e "$GCONFIG" ]]
+then
+    cp $GCONFIG ${GCONFIG}.$(date +%Y-%m-%dT%H%M%S).bak
+fi
+cp $CONFIG $GCONFIG
+printf "\n"
+}
+
+linux_iso() {
+local MNT
+MNT=$(mount | grep $DEVICE | awk '{print $3}')
+printf "\nCopying Linux *.iso files ...\n"
+## See http://rsync.samba.org/FAQ.html#2 about using the "--modify-window=1"
+## option to better manage modification times when using rsync between Linux
+## and FAT32 filesystems
+rsync --recursive --update --delete --progress --modify-window=1 \
+    --include '*iso' --exclude '*' $ISODIR/ $MNT/iso/
+# Copy memtest<VERSION>.bin
+cp $ISODIR/*.bin $MNT/boot/
+sleep 15
+printf "\n"
+}
+
+boot_update() {
+## Copy grub.cfg
+grub_cfg
+## Copy Linux distros
+linux_iso
+}
+
+boot_create() {
+## Format DEVICE
+create_filesystem
+## Create BOOT + ISO
+createdir
+## Install GRUB
+grub_mbr
+## Update CONFIG + ISO
+boot_update
+}
+
+create_vs_update() {
+while :
+do
+cat << _EOF_
+
+Please make a selection:
+
+0. INSTALL multiple Linux distros and GRUB on $DEVICE 
+1. UPDATE the Linux distros and GRUB config on $DEVICE
+
+_EOF_
+read -n 1 -p "Your choice? [0-1] > "
+
+case $REPLY in
+    0)	printf "\nOK. Configuring $DEVICE ...\n"
+	boot_create
+	break
+	;;      
+    1)	printf "\nOK. Updating $DEVICE ...\n"
+	boot_update
+	break
+	;;
+    *)  invalid_reply
+	;;
+esac
+done
+}
+
+all_done() {
+cat << _EOF_
+All done!
+
+_EOF_
+penguinista
+}
+
+##: START
+hello_world
+test_condition
+
+##: CONFIGURE
+create_vs_update
+
+##: AU REVOIR
+all_done
