@@ -4,8 +4,7 @@ GRUBS Reanimated USB Boot Stick
 
 **GRUBS** is a Bash script for transforming a USB stick into a dual-purpose device that is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot device packing multiple Linux distros.
 
-See: "Transform a USB stick into a boot device packing multiple Linux distros"
-http://www.circuidipity.com/multi-boot-usb.html
+See: `Transform a USB stick into a boot device packing multiple Linux distros <http://www.circuidipity.com/multi-boot-usb.html>`_
 
 Requirements
 ============
