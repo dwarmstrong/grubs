@@ -10,6 +10,7 @@ Requirements
 ============
 
 * ``GRUB2``
+* ``rsync``
 
 Installation
 ============
