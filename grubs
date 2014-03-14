@@ -169,6 +169,7 @@ else
         mount -t vfat /dev/$DEVICE $MULTIMNT
     fi
 fi
+set -e
 }
 
 umountdir() {
