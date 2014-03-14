@@ -4,6 +4,7 @@ set -e
 
 NAME="GRUBS"
 DESCRIPTION="GRUBS Reanimated USB Boot Stick"
+LICENSE="GPLv2"
 AUTHOR="Daniel Wayne Armstrong <daniel@circuidipity.com>"
 DEVICE=$1
 ## -------------- MODIFY -------------- ##
