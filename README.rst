@@ -22,7 +22,7 @@ To install GRUBS from source:
 
 .. code-block:: console
 
-    $ wget -c https://github.com/vonbrownie/grubs/releases/download/v0.9.1/grubs-0.9.1.tar.gz
+    $ wget -c https://github.com/vonbrownie/grubs/releases/download/v0.9.2/grubs-0.9.2.tar.gz
     $ tar -xvzf grubs-*.tar.gz
 
 Usage
