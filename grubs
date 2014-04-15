@@ -13,6 +13,8 @@ ISODIR="$HOME/grubs/iso"
 ## GRUB config for the USB stick
 CONFIG="$HOME/grubs/grub.cfg"
 ## ------------------------------------ ##
+# Sources: <https://github.com/vonbrownie/grubs/blob/master/grubs>
+#   GRUBS Reanimated USB Boot Stick <http://www.circuidipity.com/grubs.html>
 
 penguinista() {
 cat << _EOF_
