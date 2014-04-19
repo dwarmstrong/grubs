@@ -1,11 +1,9 @@
 #!/bin/bash
-
+set -u
 set -e
-
 NAME="GRUBS"
 DESCRIPTION="GRUBS Reanimated USB Boot Stick"
-LICENSE="GPLv2"
-AUTHOR="Daniel Wayne Armstrong <daniel@circuidipity.com>"
+DEPENDS=""
 DEVICE=$1
 ## -------------- MODIFY -------------- ##
 ## Location of Linux iso images
@@ -13,8 +11,21 @@ ISODIR="$HOME/grubs/iso"
 ## GRUB config for the USB stick
 CONFIG="$HOME/grubs/grub.cfg"
 ## ------------------------------------ ##
-# Sources: <https://github.com/vonbrownie/grubs/blob/master/grubs>
-#   GRUBS Reanimated USB Boot Stick <http://www.circuidipity.com/grubs.html>
+GITHUB="https://github.com/vonbrownie"
+SOURCE="${GITHUB}/https://github.com/vonbrownie/grubs/blob/master/grubs"
+# NOTES
+# * GRUBS Reanimated USB Boot Stick
+#   http://www.circuidipity.com/grubs.html>
+
+available_options() {
+cat << _EOF_
+
+OPTIONS
+  -h    print command syntax and options
+EXAMPLE
+  $ $NAME -h
+_EOF_
+}
 
 penguinista() {
 cat << _EOF_
