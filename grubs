@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 set -e
-NAME="GRUBS"
+NAME="grubs"
 DESCRIPTION="GRUBS Reanimated USB Boot Stick"
 DEPENDS=""
 DEVICE="${@: -1}"
