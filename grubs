@@ -4,7 +4,7 @@ set -e
 NAME="GRUBS"
 DESCRIPTION="GRUBS Reanimated USB Boot Stick"
 DEPENDS=""
-DEVICE=$1
+DEVICE="${@: -1}"
 ## -------------- MODIFY -------------- ##
 ## Location of Linux iso images
 ISODIR="$HOME/grubs/iso"
@@ -27,26 +27,39 @@ EXAMPLE
 _EOF_
 }
 
-penguinista() {
-cat << _EOF_
-
-(O<
-(/)_
-_EOF_
-}
-
-short_description() {
-printf "\n$( penguinista ) .: $NAME -- $DESCRIPTION :.\n"
-}
-
 long_description() {
 cat << _EOF_
 
+$NAME - $DESCRIPTION
+
 SYNOPSIS
-    grubs [DEVICE]
+  $NAME [DEVICE]
 EXAMPLE
-    Prepare USB stick /dev/sdb1
-        $ sudo grubs sdb1
+  Prepare USB stick /dev/sdb1
+  $ sudo $NAME sdb1
+_EOF_
+available_options
+}
+
+run_options() {
+while getopts ":h" OPT
+do
+    case $OPT in
+        h)
+            long_description
+            exit
+            ;;
+        ?)
+            printf "\n:-( Invalid option '-$OPTARG'\n"
+            available_options
+            exit 1
+            ;;
+    esac
+done
+}
+
+greeting() {
+cat << _EOF_
 
 Howdy! $NAME transforms a standard USB stick into a dual-purpose device that is
 both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot
@@ -65,6 +78,14 @@ The INSTALL option will **destroy all data** currently stored on $DEVICE.
 This script should be run with ROOT privileges. Please check it before use in
 a text editor and make any required modifications.
 
+_EOF_
+}
+
+penguinista() {
+cat << _EOF_
+
+(O<
+(/)_
 _EOF_
 }
 
@@ -95,8 +116,8 @@ done
 }
 
 hello_world() {
-short_description
 long_description
+greeting
 confirm_start
 }
 
