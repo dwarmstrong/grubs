@@ -345,6 +345,7 @@ penguinista
 }
 
 ##: START
+run_options "$@"
 hello_world
 test_condition
 
