@@ -126,7 +126,7 @@ if [[ $UID -ne 0 ]]
 then
     printf \
         "\n$( penguinista ) .: $NAME requires ROOT privileges to do its job.\n"
-    exit
+    exit 1
 fi
 }
 
@@ -134,14 +134,14 @@ test_device() {
 if [[ -z "$DEVICE" ]]
 then
     printf "\n$( penguinista ) .: $NAME requires the DEVICE argument.\n"
-    exit
+    exit 1
 elif [[ -b "/dev/$DEVICE" ]] && [[ "$DEVICE" == sd[b-z]1 ]]
 then
     : 
 else
     printf "\n$( penguinista ) .: '$DEVICE' is not available for use.\n"
     printf "DEVICE argument must be a 'sd[b-z]1' string.\n"
-    exit
+    exit 1
 fi
 }
 
@@ -152,7 +152,7 @@ then
 else
     printf "\n$( penguinista ) .: '$ISODIR' is not a valid location.\n"
     printf "Please open $NAME in a text editor and modify variable ISODIR.\n"
-    exit
+    exit 1
 fi
 if [[ -e "$CONFIG" ]]
 then
@@ -160,7 +160,7 @@ then
 else
     printf "\n$( penguinista ) .: '$CONFIG' is not a valid file.\n"
     printf "Please open $NAME in a text editor and modify variable CONFIG.\n"
-    exit
+    exit 1
 fi
 }
 
@@ -173,7 +173,7 @@ if [[ "$MNT/boot" == "/boot" ]]
 then
     printf \
         "\n$( penguinista ) .: DESTINATION is the root directory... Abort!\n"
-    exit
+    exit 1
 fi
 }
 
@@ -197,7 +197,7 @@ else
     then
         printf "\n$( penguinista ) .: '/mnt' is not available for use.\n"
         printf "Please unmount any devices attached to /mnt and re-run $NAME\n"
-        exit
+        exit 1
     else
         printf "\nOK. Mounting /dev/$DEVICE to $MULTIMNT ...\n"
         mount -t vfat /dev/$DEVICE $MULTIMNT
