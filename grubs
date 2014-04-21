@@ -131,34 +131,29 @@ fi
 }
 
 test_device() {
-if [[ -z "$DEVICE" ]]
+if [[ -z $DEVICE ]]
 then
     printf "\n$( penguinista ) .: $NAME requires the DEVICE argument.\n"
     exit 1
-elif [[ -b "/dev/$DEVICE" ]] && [[ "$DEVICE" == sd[b-z]1 ]]
+fi
+if [[ ! -b /dev/$DEVICE ]] || [[ ! $DEVICE == sd[b-z]1 ]]
 then
-    : 
-else
-    printf "\n$( penguinista ) .: '$DEVICE' is not available for use.\n"
+    printf "\n$( penguinista ) .: '$DEVICE' not available for use.\n"
     printf "DEVICE argument must be a 'sd[b-z]1' string.\n"
     exit 1
 fi
 }
 
 test_variable() {
-if [[ -d "$ISODIR" ]]
+if [[ ! -d $ISODIR ]]
 then
-    :
-else
-    printf "\n$( penguinista ) .: '$ISODIR' is not a valid location.\n"
+    printf "\n$( penguinista ) .: '$ISODIR' not a valid location.\n"
     printf "Please open $NAME in a text editor and modify variable ISODIR.\n"
     exit 1
 fi
-if [[ -e "$CONFIG" ]]
+if [[ ! -e $CONFIG ]]
 then
-    :
-else
-    printf "\n$( penguinista ) .: '$CONFIG' is not a valid file.\n"
+    printf "\n$( penguinista ) .: '$CONFIG' not a valid file.\n"
     printf "Please open $NAME in a text editor and modify variable CONFIG.\n"
     exit 1
 fi
@@ -184,16 +179,11 @@ test_variable
 }
 
 mountdir() {
-set +e
 local MULTIMNT
 MULTIMNT="/mnt"
-mount | grep /dev/$DEVICE >/dev/null
-if [ "$?" -eq "0" ]
+if ! $(mount | grep /dev/$DEVICE >/dev/null)
 then
-    :
-else
-    mount | grep $MULTIMNT >/dev/null
-    if [ "$?" -eq "0" ]
+    if $(mount | grep $MULTIMNT >/dev/null)
     then
         printf "\n$( penguinista ) .: '/mnt' is not available for use.\n"
         printf "Please unmount any devices attached to /mnt and re-run $NAME\n"
@@ -203,18 +193,14 @@ else
         mount -t vfat /dev/$DEVICE $MULTIMNT
     fi
 fi
-set -e
 }
 
 umountdir() {
-set +e
-mount | grep /dev/$DEVICE >/dev/null
-if [ "$?" -eq "0" ]
+if $(mount | grep /dev/$DEVICE >/dev/null)
 then
     printf "\nOK. Unmounting /dev/$DEVICE ...\n"
     umount /dev/$DEVICE
 fi
-set -e
 }
 
 createdir() {
