@@ -3,7 +3,8 @@ set -u
 set -e
 NAME="grubs"
 DESCRIPTION="GRUBS Reanimated USB Boot Stick"
-DEPENDS=""
+SYNOPSIS="$NAME DEVICE"
+DEPENDS="grub2-common, dosfstools, rsync"
 DEVICE="${@: -1}"
 ## -------------- MODIFY -------------- ##
 ## Location of Linux iso images
@@ -32,20 +33,18 @@ cat << _EOF_
 
 OPTIONS
   -h    print command syntax and options
-EXAMPLE
-  $ $NAME -h
 _EOF_
 }
 
 long_description() {
 cat << _EOF_
 
-$NAME - $DESCRIPTION
+$NAME -- $DESCRIPTION
 
 SYNOPSIS
-  $NAME [DEVICE]
+  $SYNOPSIS
 EXAMPLE
-  Prepare USB stick /dev/sdb1
+  Prepare a USB stick identified as /dev/sdb1:
   $ sudo $NAME sdb1
 _EOF_
 available_options
@@ -71,9 +70,9 @@ done
 greeting() {
 cat << _EOF_
 
-Howdy! $NAME transforms a standard USB stick into a dual-purpose device that is
-both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot
-device packing multiple Linux distros.
+Howdy! '$NAME' transforms a standard USB stick into a dual-purpose device that
+is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB
+boot device packing multiple Linux distros.
 
 See: "Transform a USB stick into a boot device packing multiple Linux distros"
 http://www.circuidipity.com/multi-boot-usb.html
@@ -311,8 +310,8 @@ cat << _EOF_
 
 Please make a selection:
 
-0. INSTALL multiple Linux distros and GRUB on $DEVICE 
-1. UPDATE the Linux distros and GRUB config on $DEVICE
+0) INSTALL multiple Linux distros and GRUB on $DEVICE 
+1) UPDATE the Linux distros and GRUB config on $DEVICE
 
 _EOF_
 read -n 1 -p "Your choice? [0-1] > "
