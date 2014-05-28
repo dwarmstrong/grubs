@@ -34,11 +34,11 @@ Usage
 
 **Step 2:** Open ``grubs`` in a text editor and modify the variables ``ISODIR`` and ``CONFIG`` to match where ``iso`` and ``grub.cfg`` are located on your system.
 
-**Step 3:** Just run (as root) ``grubs [DEVICE]``. For example ... to install GRUB and Linux distros on a USB stick identified as ``/dev/sdb1``: 
+**Step 3:** Just run (as root) ``/path/to/grubs [DEVICE]``. For example ... user foo installs GRUB and Linux distros on a USB stick identified as ``/dev/sdb1``: 
 
 .. code-block:: console
 
-    $ sudo grubs sdb1
+    $ sudo /home/foo/bin/grubs sdb1
 
 Reboot, select the USB stick (depending on BIOS settings) as boot device and GRUB will display a menu of the installed Linux distro images. Reboot again and return to using your USB stick as a regular storage device.
 
