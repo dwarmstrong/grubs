@@ -18,7 +18,7 @@ set -eu
 script_name="GRUBS"
 script_command="grubs"
 script_description="GRUBS Reanimated USB Boot Stick"
-script_synopsis="$script_command DEVICE"
+script_synopsis="$script_command [OPTION] DEVICE"
 script_src="https://github.com/vonbrownie/grubs/blob/master/grubs"
 script_depends="grub2-common, dosfstools, rsync"
 script_device="${@: -1}"
@@ -30,9 +30,38 @@ grub_conf="$HOME/grubs/grub.cfg"
 ## ------------------------------------ ##
 
 # Functions
+echo_red() {
+echo -e "\E[1;31m$1"
+echo -e '\e[0m'
+}
+
+echo_green() {
+echo -e "\E[1;32m$1"
+echo -e '\e[0m'
+}
+
+echo_yellow() {
+echo -e "\E[1;33m$1"
+echo -e '\e[0m'
+}
+
+echo_blue() {
+echo -e "\E[1;34m$1"
+echo -e '\e[0m'
+}
+
+echo_magenta() {
+echo -e "\E[1;35m$1"
+echo -e '\e[0m'
+}
+
+echo_cyan() {
+echo -e "\E[1;36m$1"
+echo -e '\e[0m'
+}
+
 penguinista() {
 cat << _EOF_
-
 (O<
 (/)_
 _EOF_
@@ -40,19 +69,17 @@ _EOF_
 
 script_options() {
 cat << _EOF_
-
 OPTIONS
   -h    print command syntax and options
 _EOF_
 }
 
 full_script_description() {
+echo ""
+echo_yellow "$( penguinista ) .: $script_name -- $script_description"
+echo_cyan "SOURCE: $script_src"
+echo_cyan "SYNOPSIS: $script_synopsis"
 cat << _EOF_
-
-$( penguinista ) .: $script_name -- $script_description
-
-SYNOPSIS
-  $script_synopsis
 EXAMPLE
   Prepare a USB stick partition identified as /dev/sdb1:
   $ sudo $script_command sdb1
@@ -69,7 +96,8 @@ do
             exit
             ;;
         ?)
-            echo "$( penguinista ) .: Invalid option '-$OPTARG'\n"
+            echo ""
+            echo_red "$( penguinista ) .: ERROR: Invalid option '-$OPTARG'"
             script_options
             exit 1
             ;;
@@ -80,9 +108,9 @@ done
 greeting() {
 cat << _EOF_
 
-Howdy! '$script_name' transforms a standard USB stick into a dual-purpose script_device that
-is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB
-boot script_device packing multiple Linux distros.
+Howdy! $script_name transforms a standard USB stick into a dual-purpose DEVICE
+that is both a storage medium usable under Linux, Windows, and Mac OS and a
+GRUB boot script_device packing multiple Linux distros.
 
 See: "Transform a USB stick into a boot script_device packing multiple Linux distros"
 http://www.circuidipity.com/multi-boot-usb.html
@@ -92,20 +120,22 @@ Make careful note of the drive and partition labels on your system!
 
 You have chosen '$script_device' as script_device.
 
-The INSTALL option will **destroy all data** currently stored on $script_device.
+The INSTALL option will **destroy all data** currently stored on '$script_device'.
 
-This script should be run with ROOT privileges. Please check it before use in
-a text editor and make any required modifications.
+This script should be run with ROOT privileges. Please check it before
+use in a text editor and make any required modifications.
 
 _EOF_
 }
 
 invalid_reply() {
-printf "\n'$REPLY' is invalid input ...\n"
+echo ""
+echo_red "'$REPLY' is invalid input ..."
 }
 
 invalid_reply_yn() {
-printf "\n'$REPLY' is invalid input. Please select 'Y(es)' or 'N(o)' ...\n"
+echo ""
+echo_red "'$REPLY' is invalid input. Please select 'Y(es)' or 'N(o)' ..."
 }
 
 confirm_start() {
@@ -114,11 +144,14 @@ do
     read -n 1 -p "Run script now? [yN] > "
     if [[ $REPLY == [yY] ]]
     then
-        printf "\nLet's roll then ...\n"
+        echo ""
+        echo "Let's roll then ..."
         break
     elif [[ $REPLY == [nN] || $REPLY == "" ]]
     then
-        penguinista
+        echo ""
+        echo ""
+        echo_green "$( penguinista )"
         exit
     else
         invalid_reply_yn
@@ -135,8 +168,8 @@ confirm_start
 test_root() {
 if [[ $UID -ne 0 ]]
 then
-    printf \
-        "\n$( penguinista ) .: $script_name requires ROOT privileges to do its job.\n"
+    echo ""
+    echo_red "$( penguinista ) .: ERROR: $script_name requires ROOT privileges to do its job."
     exit 1
 fi
 }
@@ -144,13 +177,15 @@ fi
 test_script_device() {
 if [[ -z $script_device ]]
 then
-    echo "$( penguinista ) .: $script_name requires the DEVICE argument.\n"
+    echo ""
+    echo_red "$( penguinista ) .: ERROR: $script_name requires the DEVICE argument."
     exit 1
 fi
 if [[ ! -b /dev/$script_device ]] || [[ ! $script_device == sd[b-z]1 ]]
 then
-    printf "\n$( penguinista ) .: '$script_device' not available for use.\n"
-    printf "script_device argument must be a 'sd[b-z]1' string.\n"
+    echo ""
+    echo_red "$( penguinista ) .: ERROR: '$script_device' not available for use."
+    echo_red "DEVICE argument must be 'sd[b-z]1'."
     exit 1
 fi
 }
@@ -158,14 +193,16 @@ fi
 test_variable() {
 if [[ ! -d $iso_dir ]]
 then
-    printf "\n$( penguinista ) .: '$iso_dir' not a valid location.\n"
-    printf "Please open $script_name in a text editor and modify variable iso_dir.\n"
+    echo ""
+    echo_red "$( penguinista ) .: ERROR: '$iso_dir' not a valid location."
+    echo_red "Please open $script_name in a text editor and modify variable 'iso_dir'."
     exit 1
 fi
 if [[ ! -e $grub_conf ]]
 then
-    printf "\n$( penguinista ) .: '$grub_conf' not a valid file.\n"
-    printf "Please open $script_name in a text editor and modify variable grub_conf.\n"
+    echo ""
+    echo_red "$( penguinista ) .: ERROR: '$grub_conf' not a valid file."
+    echo_red "Please open $script_name in a text editor and modify variable 'grub_conf'."
     exit 1
 fi
 }
@@ -173,12 +210,12 @@ fi
 test_mount() {
 ## A test to ensure that our modification are
 ## going to '/MOUNTPOINT/boot' NOT '/boot'
-local MNT
-MNT=$(mount | grep $script_device | awk '{print $3}')
-if [[ "$MNT/boot" == "/boot" ]]
+local mountpoint
+mountpoint=$(mount | grep $script_device | awk '{print $3}')
+if [[ "$mountpoint/boot" == "/boot" ]]
 then
-    printf \
-        "\n$( penguinista ) .: DESTINATION is the root directory... Abort!\n"
+    echo ""
+    echo_red "$( penguinista ) .: ERROR: DESTINATION is the root directory... Abort!"
     exit 1
 fi
 }
@@ -190,38 +227,41 @@ test_variable
 }
 
 mountdir() {
-local MULTIMNT
-MULTIMNT="/mnt"
+local multi_mnt
+multi_mnt="/mnt"
 if ! $(mount | grep /dev/$script_device >/dev/null)
 then
-    if $(mount | grep $MULTIMNT >/dev/null)
+    if $(mount | grep $multi_mnt >/dev/null)
     then
-        printf "\n$( penguinista ) .: '/mnt' is not available for use.\n"
-        printf "Please unmount any script_devices attached to /mnt and re-run $script_name\n"
+        echo ""
+        echo_red "$( penguinista ) .: ERROR: Mountpoint '$multi_mnt' is not available for use."
+        echo_red "Please unmount any partitions attached to $multi_mnt and re-run ${script_name}."
         exit 1
     else
-        printf "\nOK. Mounting /dev/$script_device to $MULTIMNT ...\n"
-        mount -t vfat /dev/$script_device $MULTIMNT
+        echo ""
+        echo "OK. Mounting /dev/${script_device} to ${multi_mnt}..."
+        mount -t vfat /dev/${script_device} $multi_mnt
     fi
 fi
 }
 
 umountdir() {
-if $(mount | grep /dev/$script_device >/dev/null)
+if $(mount | grep /dev/${script_device} >/dev/null)
 then
-    printf "\nOK. Unmounting /dev/$script_device ...\n"
-    umount /dev/$script_device
+    echo ""
+    echo "OK... Unmounting /dev/${script_device}..."
+    umount /dev/${script_device}
 fi
 }
 
 createdir() {
 mountdir
 test_mount
-local MNT
-MNT=$(mount | grep $script_device | awk '{print $3}')
-printf "\nCreating BOOT and ISO folders ...\n"
-mkdir $MNT/{boot,iso}
-printf "\n"
+local mountpoint
+mountpoint=$(mount | grep $script_device | awk '{print $3}')
+echo ""
+echo "Creating BOOT and ISO folders..."
+mkdir ${mountpoint}/{boot,iso}
 }
 
 create_filesystem() {
@@ -232,14 +272,16 @@ read -n 1 -p \
 if [[ $REPLY == [yY] ]]
 then
     umountdir
-    printf "\nCreating FAT32 filesystem on $script_device ...\n"
-    mkfs.vfat -n multiboot /dev/$script_device
-    printf "\n"
+    echo ""
+    echo "Creating FAT32 filesystem on ${script_device}..."
+    mkfs.vfat -n multiboot /dev/${script_device}
+    echo ""
     break
 elif [[ $REPLY == [nN] || $REPLY == "" ]]
 then
-    printf "\nAbort install.\n"
-    penguinista
+    echo ""
+    echo "Abort install."
+    echo_green "$( penguinista )"
     exit
 else
     invalid_reply_yn
@@ -248,43 +290,46 @@ done
 }
 
 grub_mbr() {
-local MNT
-MNT=$(mount | grep $script_device | awk '{print $3}')
+local mountpoint
+mountpoint=$(mount | grep $script_device | awk '{print $3}')
 # Install GRUB to the Master Boot Record (MBR) of the USB script_device
-printf "\nInstalling GRUB to MBR of ${script_device:0:3} ...\n"
-grub-install --force --no-floppy --boot-directory=$MNT/boot /dev/${script_device:0:3}
-printf "\n"
+echo ""
+echo "Installing GRUB to MBR of ${script_device:0:3}..."
+grub-install --force --no-floppy --boot-directory=${mountpoint}/boot /dev/${script_device:0:3}
+echo ""
 }
 
 grub_cfg() {
 mountdir
 test_mount
-local MNT
-MNT=$(mount | grep $script_device | awk '{print $3}')
-local Ggrub_conf
-Ggrub_conf="$MNT/boot/grub/grub.cfg"
-printf "\nCopying grub.cfg ...\n"
-if [[ -e "$Ggrub_conf" ]]
+local mountpoint
+mountpoint=$(mount | grep $script_device | awk '{print $3}')
+local device_grub_conf
+device_grub_conf="$MNT/boot/grub/grub.cfg"
+echo ""
+echo "Copying grub.cfg..."
+if [[ -e "$device_grub_conf" ]]
 then
-    cp $Ggrub_conf ${Ggrub_conf}.$(date +%Y-%m-%dT%H%M%S).bak
+    cp $device_grub_conf ${device_grub_conf}.$(date +%Y-%m-%dT%H%M%S).bak
 fi
-cp $grub_conf $Ggrub_conf
-printf "\n"
+cp $grub_conf $device_grub_conf
+echo ""
 }
 
 linux_iso() {
-local MNT
-MNT=$(mount | grep $script_device | awk '{print $3}')
-printf "\nCopying Linux *.iso files ...\n"
+local mountpoint
+mountpoint=$(mount | grep $script_device | awk '{print $3}')
+echo ""
+echo "Copying Linux *.iso files..."
 ## See http://rsync.samba.org/FAQ.html#2 about using the "--modify-window=1"
 ## option to better manage modification times when using rsync between Linux
 ## and FAT32 filesystems
 rsync --recursive --update --delete --progress --modify-window=1 \
-    --include '*iso' --exclude '*' $iso_dir/ $MNT/iso/
+    --include '*iso' --exclude '*' ${iso_dir}/ ${mountpoint}/iso/
 # Copy memtest<VERSION>.bin
-cp $iso_dir/*.bin $MNT/boot/
+cp ${iso_dir}/*.bin ${mountpoint}/boot/
 sleep 15
-printf "\n"
+echo ""
 }
 
 boot_update() {
@@ -319,26 +364,25 @@ _EOF_
 read -n 1 -p "Your choice? [0-1] > "
 
 case $REPLY in
-    0)	printf "\nOK. grub_confuring $script_device ...\n"
-	boot_create
-	break
-	;;      
-    1)	printf "\nOK. Updating $script_device ...\n"
-	boot_update
-	break
-	;;
+    0)	echo ""
+        echo "OK... INSTALLing..."
+	    boot_create
+	    break
+	    ;;      
+    1)	echo ""
+        echo "OK... UPDATing..."
+	    boot_update
+	    break
+	    ;;
     *)  invalid_reply
-	;;
+	    ;;
 esac
 done
 }
 
 all_done() {
-cat << _EOF_
-All done!
-
-_EOF_
-penguinista
+echo ""
+echo_green "$( penguinista ) .: All done!"
 }
 
 ##: START
