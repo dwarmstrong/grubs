@@ -1,34 +1,44 @@
 #!/bin/bash
-set -u
-set -e
-NAME="grubs"
-DESCRIPTION="GRUBS Reanimated USB Boot Stick"
-SYNOPSIS="$NAME DEVICE"
-DEPENDS="grub2-common, dosfstools, rsync"
-DEVICE="${@: -1}"
-## -------------- MODIFY -------------- ##
-## Location of Linux iso images
-ISODIR="$HOME/grubs/iso"
-## GRUB config for the USB stick
-CONFIG="$HOME/grubs/grub.cfg"
-## ------------------------------------ ##
-GITHUB="https://github.com/vonbrownie"
-SOURCE="${GITHUB}/https://github.com/vonbrownie/grubs/blob/master/grubs"
+set -eu
+
+# Copyright (c) 2014 Daniel Wayne Armstrong. All rights reserved.
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License (GPLv2) published by
+# the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE. See the LICENSE file for more details.
+
 # NOTES
 # * GRUBS Reanimated USB Boot Stick
 #   http://www.circuidipity.com/grubs.html>
 
-# LICENSE
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License (GPLv2) published
-# by the Free Software Foundation.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-# for more details.
+# Script variables
+script_name="GRUBS"
+script_command="grubs"
+script_description="GRUBS Reanimated USB Boot Stick"
+script_synopsis="$script_command DEVICE"
+script_src="https://github.com/vonbrownie/grubs/blob/master/grubs"
+script_depends="grub2-common, dosfstools, rsync"
+script_device="${@: -1}"
+## -------------- MODIFY -------------- ##
+## Location of Linux iso images
+iso_dir="$HOME/grubs/iso"
+## GRUB grub_conf for the USB stick
+grub_conf="$HOME/grubs/grub.cfg"
+## ------------------------------------ ##
 
-available_options() {
+# Functions
+penguinista() {
+cat << _EOF_
+
+(O<
+(/)_
+_EOF_
+}
+
+script_options() {
 cat << _EOF_
 
 OPTIONS
@@ -36,18 +46,18 @@ OPTIONS
 _EOF_
 }
 
-long_description() {
+full_script_description() {
 cat << _EOF_
 
-$NAME -- $DESCRIPTION
+$( penguinista ) .: $script_name -- $script_description
 
 SYNOPSIS
-  $SYNOPSIS
+  $script_synopsis
 EXAMPLE
-  Prepare a USB stick identified as /dev/sdb1:
-  $ sudo $NAME sdb1
+  Prepare a USB stick partition identified as /dev/sdb1:
+  $ sudo $script_command sdb1
 _EOF_
-available_options
+script_options
 }
 
 run_options() {
@@ -55,12 +65,12 @@ while getopts ":h" OPT
 do
     case $OPT in
         h)
-            long_description
+            full_script_description
             exit
             ;;
         ?)
-            printf "\n:-( Invalid option '-$OPTARG'\n"
-            available_options
+            echo "$( penguinista ) .: Invalid option '-$OPTARG'\n"
+            script_options
             exit 1
             ;;
     esac
@@ -70,31 +80,23 @@ done
 greeting() {
 cat << _EOF_
 
-Howdy! '$NAME' transforms a standard USB stick into a dual-purpose device that
+Howdy! '$script_name' transforms a standard USB stick into a dual-purpose script_device that
 is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB
-boot device packing multiple Linux distros.
+boot script_device packing multiple Linux distros.
 
-See: "Transform a USB stick into a boot device packing multiple Linux distros"
+See: "Transform a USB stick into a boot script_device packing multiple Linux distros"
 http://www.circuidipity.com/multi-boot-usb.html
 
 ### WARNING ###
 Make careful note of the drive and partition labels on your system!
 
-You have chosen '$DEVICE' as DEVICE.
+You have chosen '$script_device' as script_device.
 
-The INSTALL option will **destroy all data** currently stored on $DEVICE.
+The INSTALL option will **destroy all data** currently stored on $script_device.
 
 This script should be run with ROOT privileges. Please check it before use in
 a text editor and make any required modifications.
 
-_EOF_
-}
-
-penguinista() {
-cat << _EOF_
-
-(O<
-(/)_
 _EOF_
 }
 
@@ -125,7 +127,7 @@ done
 }
 
 hello_world() {
-long_description
+full_script_description
 greeting
 confirm_start
 }
@@ -134,36 +136,36 @@ test_root() {
 if [[ $UID -ne 0 ]]
 then
     printf \
-        "\n$( penguinista ) .: $NAME requires ROOT privileges to do its job.\n"
+        "\n$( penguinista ) .: $script_name requires ROOT privileges to do its job.\n"
     exit 1
 fi
 }
 
-test_device() {
-if [[ -z $DEVICE ]]
+test_script_device() {
+if [[ -z $script_device ]]
 then
-    printf "\n$( penguinista ) .: $NAME requires the DEVICE argument.\n"
+    echo "$( penguinista ) .: $script_name requires the DEVICE argument.\n"
     exit 1
 fi
-if [[ ! -b /dev/$DEVICE ]] || [[ ! $DEVICE == sd[b-z]1 ]]
+if [[ ! -b /dev/$script_device ]] || [[ ! $script_device == sd[b-z]1 ]]
 then
-    printf "\n$( penguinista ) .: '$DEVICE' not available for use.\n"
-    printf "DEVICE argument must be a 'sd[b-z]1' string.\n"
+    printf "\n$( penguinista ) .: '$script_device' not available for use.\n"
+    printf "script_device argument must be a 'sd[b-z]1' string.\n"
     exit 1
 fi
 }
 
 test_variable() {
-if [[ ! -d $ISODIR ]]
+if [[ ! -d $iso_dir ]]
 then
-    printf "\n$( penguinista ) .: '$ISODIR' not a valid location.\n"
-    printf "Please open $NAME in a text editor and modify variable ISODIR.\n"
+    printf "\n$( penguinista ) .: '$iso_dir' not a valid location.\n"
+    printf "Please open $script_name in a text editor and modify variable iso_dir.\n"
     exit 1
 fi
-if [[ ! -e $CONFIG ]]
+if [[ ! -e $grub_conf ]]
 then
-    printf "\n$( penguinista ) .: '$CONFIG' not a valid file.\n"
-    printf "Please open $NAME in a text editor and modify variable CONFIG.\n"
+    printf "\n$( penguinista ) .: '$grub_conf' not a valid file.\n"
+    printf "Please open $script_name in a text editor and modify variable grub_conf.\n"
     exit 1
 fi
 }
@@ -172,7 +174,7 @@ test_mount() {
 ## A test to ensure that our modification are
 ## going to '/MOUNTPOINT/boot' NOT '/boot'
 local MNT
-MNT=$(mount | grep $DEVICE | awk '{print $3}')
+MNT=$(mount | grep $script_device | awk '{print $3}')
 if [[ "$MNT/boot" == "/boot" ]]
 then
     printf \
@@ -183,32 +185,32 @@ fi
 
 test_condition() {
 test_root
-test_device
+test_script_device
 test_variable
 }
 
 mountdir() {
 local MULTIMNT
 MULTIMNT="/mnt"
-if ! $(mount | grep /dev/$DEVICE >/dev/null)
+if ! $(mount | grep /dev/$script_device >/dev/null)
 then
     if $(mount | grep $MULTIMNT >/dev/null)
     then
         printf "\n$( penguinista ) .: '/mnt' is not available for use.\n"
-        printf "Please unmount any devices attached to /mnt and re-run $NAME\n"
+        printf "Please unmount any script_devices attached to /mnt and re-run $script_name\n"
         exit 1
     else
-        printf "\nOK. Mounting /dev/$DEVICE to $MULTIMNT ...\n"
-        mount -t vfat /dev/$DEVICE $MULTIMNT
+        printf "\nOK. Mounting /dev/$script_device to $MULTIMNT ...\n"
+        mount -t vfat /dev/$script_device $MULTIMNT
     fi
 fi
 }
 
 umountdir() {
-if $(mount | grep /dev/$DEVICE >/dev/null)
+if $(mount | grep /dev/$script_device >/dev/null)
 then
-    printf "\nOK. Unmounting /dev/$DEVICE ...\n"
-    umount /dev/$DEVICE
+    printf "\nOK. Unmounting /dev/$script_device ...\n"
+    umount /dev/$script_device
 fi
 }
 
@@ -216,7 +218,7 @@ createdir() {
 mountdir
 test_mount
 local MNT
-MNT=$(mount | grep $DEVICE | awk '{print $3}')
+MNT=$(mount | grep $script_device | awk '{print $3}')
 printf "\nCreating BOOT and ISO folders ...\n"
 mkdir $MNT/{boot,iso}
 printf "\n"
@@ -226,12 +228,12 @@ create_filesystem() {
 while :
 do
 read -n 1 -p \
-    "### WARNING ### All data will be wiped from $DEVICE! Proceed? [yN] > "
+    "### WARNING ### All data will be wiped from $script_device! Proceed? [yN] > "
 if [[ $REPLY == [yY] ]]
 then
     umountdir
-    printf "\nCreating FAT32 filesystem on $DEVICE ...\n"
-    mkfs.vfat -n multiboot /dev/$DEVICE
+    printf "\nCreating FAT32 filesystem on $script_device ...\n"
+    mkfs.vfat -n multiboot /dev/$script_device
     printf "\n"
     break
 elif [[ $REPLY == [nN] || $REPLY == "" ]]
@@ -247,10 +249,10 @@ done
 
 grub_mbr() {
 local MNT
-MNT=$(mount | grep $DEVICE | awk '{print $3}')
-# Install GRUB to the Master Boot Record (MBR) of the USB device
-printf "\nInstalling GRUB to MBR of ${DEVICE:0:3} ...\n"
-grub-install --force --no-floppy --boot-directory=$MNT/boot /dev/${DEVICE:0:3}
+MNT=$(mount | grep $script_device | awk '{print $3}')
+# Install GRUB to the Master Boot Record (MBR) of the USB script_device
+printf "\nInstalling GRUB to MBR of ${script_device:0:3} ...\n"
+grub-install --force --no-floppy --boot-directory=$MNT/boot /dev/${script_device:0:3}
 printf "\n"
 }
 
@@ -258,29 +260,29 @@ grub_cfg() {
 mountdir
 test_mount
 local MNT
-MNT=$(mount | grep $DEVICE | awk '{print $3}')
-local GCONFIG
-GCONFIG="$MNT/boot/grub/grub.cfg"
+MNT=$(mount | grep $script_device | awk '{print $3}')
+local Ggrub_conf
+Ggrub_conf="$MNT/boot/grub/grub.cfg"
 printf "\nCopying grub.cfg ...\n"
-if [[ -e "$GCONFIG" ]]
+if [[ -e "$Ggrub_conf" ]]
 then
-    cp $GCONFIG ${GCONFIG}.$(date +%Y-%m-%dT%H%M%S).bak
+    cp $Ggrub_conf ${Ggrub_conf}.$(date +%Y-%m-%dT%H%M%S).bak
 fi
-cp $CONFIG $GCONFIG
+cp $grub_conf $Ggrub_conf
 printf "\n"
 }
 
 linux_iso() {
 local MNT
-MNT=$(mount | grep $DEVICE | awk '{print $3}')
+MNT=$(mount | grep $script_device | awk '{print $3}')
 printf "\nCopying Linux *.iso files ...\n"
 ## See http://rsync.samba.org/FAQ.html#2 about using the "--modify-window=1"
 ## option to better manage modification times when using rsync between Linux
 ## and FAT32 filesystems
 rsync --recursive --update --delete --progress --modify-window=1 \
-    --include '*iso' --exclude '*' $ISODIR/ $MNT/iso/
+    --include '*iso' --exclude '*' $iso_dir/ $MNT/iso/
 # Copy memtest<VERSION>.bin
-cp $ISODIR/*.bin $MNT/boot/
+cp $iso_dir/*.bin $MNT/boot/
 sleep 15
 printf "\n"
 }
@@ -293,13 +295,13 @@ linux_iso
 }
 
 boot_create() {
-## Format DEVICE
+## Format script_device
 create_filesystem
 ## Create BOOT + ISO
 createdir
 ## Install GRUB
 grub_mbr
-## Update CONFIG + ISO
+## Update grub_conf + ISO
 boot_update
 }
 
@@ -310,18 +312,18 @@ cat << _EOF_
 
 Please make a selection:
 
-0) INSTALL multiple Linux distros and GRUB on $DEVICE 
-1) UPDATE the Linux distros and GRUB config on $DEVICE
+0) INSTALL multiple Linux distros and GRUB on $script_device 
+1) UPDATE the Linux distros and GRUB grub_conf on $script_device
 
 _EOF_
 read -n 1 -p "Your choice? [0-1] > "
 
 case $REPLY in
-    0)	printf "\nOK. Configuring $DEVICE ...\n"
+    0)	printf "\nOK. grub_confuring $script_device ...\n"
 	boot_create
 	break
 	;;      
-    1)	printf "\nOK. Updating $DEVICE ...\n"
+    1)	printf "\nOK. Updating $script_device ...\n"
 	boot_update
 	break
 	;;
@@ -344,7 +346,7 @@ run_options "$@"
 hello_world
 test_condition
 
-##: CONFIGURE
+##: grub_confURE
 create_vs_update
 
 ##: AU REVOIR
