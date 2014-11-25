@@ -372,7 +372,7 @@ cat << _EOF_
 Please make a selection:
 
 0) INSTALL multiple Linux distros and GRUB on $script_device 
-1) UPDATE the Linux distros and GRUB grub_conf on $script_device
+1) UPDATE the Linux distros and grub.cfg on $script_device
 
 _EOF_
 read -n 1 -p "Your choice? [0-1] > "
