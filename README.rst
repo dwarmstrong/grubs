@@ -12,19 +12,6 @@ Requirements
 * ``GRUB2``
 * ``rsync``
 
-Installation
-============
-
-Source
-------
-
-To install GRUBS from source:
-
-.. code-block:: console
-
-    $ wget -c https://github.com/vonbrownie/grubs/releases/download/v0.9.2/grubs-0.9.2.tar.gz
-    $ tar -xvzf grubs-*.tar.gz
-
 Usage
 =====
 
@@ -32,13 +19,13 @@ Usage
 
 **Step 1:** Edit the USB stick's sample ``grub.cfg`` with entries for the Linux images to be copied to the device. Each distro is a little bit different in the manner its booted by GRUB.
 
-**Step 2:** Open ``grubs`` in a text editor and modify the variables ``ISODIR`` and ``CONFIG`` to match where ``iso`` and ``grub.cfg`` are located on your system.
+**Step 2:** Open ``grubs`` in a text editor and modify the ``iso_dir`` and ``grub_conf`` variables to match where ``iso`` and ``grub.cfg`` are located on your system. Or indicate a temporary location and config with the ``-i`` and ``-c`` options. See ``grubs -h`` for details.
 
-**Step 3:** Just run (as root) ``/path/to/grubs [DEVICE]``. For example ... user foo installs GRUB and Linux distros on a USB stick identified as ``/dev/sdb1``: 
+**Step 3:** Run (as root) ``/path/to/grubs [OPTION] DEVICE``. Example... FOO installs GRUB and Linux distros on a USB stick identified as ``/dev/sdb1``: 
 
 .. code-block:: console
 
-    $ sudo /home/foo/bin/grubs sdb1
+    $ sudo /home/FOO/bin/grubs -i /path/to/linux/iso_images -c /path/to/usb_stick/grub.cfg sdb1
 
 Reboot, select the USB stick (depending on BIOS settings) as boot device and GRUB will display a menu of the installed Linux distro images. Reboot again and return to using your USB stick as a regular storage device.
 
