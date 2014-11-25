@@ -25,7 +25,7 @@ script_device="${@: -1}"
 ## -------------- MODIFY -------------- ##
 ## Location of Linux iso images
 iso_dir="$HOME/grubs/iso"
-## GRUB grub_conf for the USB stick
+## GRUB grub.cfg for the USB stick
 grub_conf="$HOME/grubs/grub.cfg"
 ## ------------------------------------ ##
 
@@ -45,16 +45,6 @@ echo -e "\E[1;33m$1"
 echo -e '\e[0m'
 }
 
-echo_blue() {
-echo -e "\E[1;34m$1"
-echo -e '\e[0m'
-}
-
-echo_magenta() {
-echo -e "\E[1;35m$1"
-echo -e '\e[0m'
-}
-
 echo_cyan() {
 echo -e "\E[1;36m$1"
 echo -e '\e[0m'
@@ -71,6 +61,8 @@ script_options() {
 cat << _EOF_
 OPTIONS
   -h    print command syntax and options
+  -i    directory containing Linux *.iso images
+  -c    grub.cfg for USB stick
 _EOF_
 }
 
@@ -79,21 +71,31 @@ echo ""
 echo_yellow "$( penguinista ) .: $script_name -- $script_description"
 echo_cyan "SOURCE: $script_src"
 echo_cyan "SYNOPSIS: $script_synopsis"
+script_options
 cat << _EOF_
 EXAMPLE
   Prepare a USB stick partition identified as /dev/sdb1:
-  $ sudo $script_command sdb1
+  $ sudo $script_command -i $iso_dir -c $grub_conf sdb1
 _EOF_
-script_options
 }
 
 run_options() {
-while getopts ":h" OPT
+while getopts ":hi:c:" OPT
 do
     case $OPT in
         h)
             full_script_description
             exit
+            ;;
+        i)
+            iso_dir="$OPTARG"
+            ;;
+        c)
+            grub_conf="$OPTARG"
+            ;;
+        :)
+            echo_red "$( penguinista ) .: Option '-$OPTARG' requires an argument."
+            exit 1
             ;;
         ?)
             echo ""
@@ -118,7 +120,7 @@ http://www.circuidipity.com/multi-boot-usb.html
 ### WARNING ###
 Make careful note of the drive and partition labels on your system!
 
-You have chosen '$script_device' as script_device.
+You have chosen '$script_device' as DEVICE.
 
 The INSTALL option will **destroy all data** currently stored on '$script_device'.
 
@@ -130,12 +132,12 @@ _EOF_
 
 invalid_reply() {
 echo ""
-echo_red "'$REPLY' is invalid input ..."
+echo_red "'${REPLY}' is invalid input..."
 }
 
 invalid_reply_yn() {
 echo ""
-echo_red "'$REPLY' is invalid input. Please select 'Y(es)' or 'N(o)' ..."
+echo_red "'${REPLY}' is invalid input. Please select 'Y(es)' or 'N(o)'..."
 }
 
 confirm_start() {
@@ -160,6 +162,7 @@ done
 }
 
 hello_world() {
+clear
 full_script_description
 greeting
 confirm_start
@@ -185,7 +188,7 @@ if [[ ! -b /dev/$script_device ]] || [[ ! $script_device == sd[b-z]1 ]]
 then
     echo ""
     echo_red "$( penguinista ) .: ERROR: '$script_device' not available for use."
-    echo_red "DEVICE argument must be 'sd[b-z]1'."
+    echo "FIX: DEVICE argument must be 'sd[b-z]1'."
     exit 1
 fi
 }
@@ -193,17 +196,26 @@ fi
 test_variable() {
 if [[ ! -d $iso_dir ]]
 then
-    echo ""
-    echo_red "$( penguinista ) .: ERROR: '$iso_dir' not a valid location."
-    echo_red "Please open $script_name in a text editor and modify variable 'iso_dir'."
-    exit 1
+echo ""
+echo_red "$( penguinista ) .: ERROR: '$iso_dir' not a valid location."
+cat << _EOF_
+FIX: Set a temporary location with '-i /path/to/linux/iso_images' option
+or a permanent location by opening $script_name in a text editor and modifying
+the 'iso_dir' variable.
+
+_EOF_
+exit 1
 fi
 if [[ ! -e $grub_conf ]]
 then
-    echo ""
-    echo_red "$( penguinista ) .: ERROR: '$grub_conf' not a valid file."
-    echo_red "Please open $script_name in a text editor and modify variable 'grub_conf'."
-    exit 1
+echo ""
+echo_red "$( penguinista ) .: ERROR: '$grub_conf' not a valid file."
+cat << _EOF_
+FIX: Set a temporary configuration file with '-c /path/to/usb_stick/grub.cfg' option
+or a permanent file by opening $script_name in a text editor and modifying the 'grub_conf' variable.
+
+_EOF_
+exit 1
 fi
 }
 
@@ -212,7 +224,7 @@ test_mount() {
 ## going to '/MOUNTPOINT/boot' NOT '/boot'
 local mountpoint
 mountpoint=$(mount | grep $script_device | awk '{print $3}')
-if [[ "$mountpoint/boot" == "/boot" ]]
+if [[ "${mountpoint}/boot" == "/boot" ]]
 then
     echo ""
     echo_red "$( penguinista ) .: ERROR: DESTINATION is the root directory... Abort!"
@@ -229,13 +241,13 @@ test_variable
 mountdir() {
 local multi_mnt
 multi_mnt="/mnt"
-if ! $(mount | grep /dev/$script_device >/dev/null)
+if ! $(mount | grep /dev/${script_device} >/dev/null)
 then
-    if $(mount | grep $multi_mnt >/dev/null)
+    if $(mount | grep ${multi_mnt} >/dev/null)
     then
         echo ""
-        echo_red "$( penguinista ) .: ERROR: Mountpoint '$multi_mnt' is not available for use."
-        echo_red "Please unmount any partitions attached to $multi_mnt and re-run ${script_name}."
+        echo_red "$( penguinista ) .: ERROR: Mountpoint '${multi_mnt}' is not available for use."
+        echo "FIX: Please unmount any partitions attached to $multi_mnt and re-run ${script_name}."
         exit 1
     else
         echo ""
@@ -268,7 +280,7 @@ create_filesystem() {
 while :
 do
 read -n 1 -p \
-    "### WARNING ### All data will be wiped from $script_device! Proceed? [yN] > "
+    "### WARNING ### All data will be wiped from ${script_device}! Proceed? [yN] > "
 if [[ $REPLY == [yY] ]]
 then
     umountdir
@@ -281,6 +293,7 @@ elif [[ $REPLY == [nN] || $REPLY == "" ]]
 then
     echo ""
     echo "Abort install."
+    echo ""
     echo_green "$( penguinista )"
     exit
 else
@@ -305,7 +318,7 @@ test_mount
 local mountpoint
 mountpoint=$(mount | grep $script_device | awk '{print $3}')
 local device_grub_conf
-device_grub_conf="$MNT/boot/grub/grub.cfg"
+device_grub_conf="${mountpoint}/boot/grub/grub.cfg"
 echo ""
 echo "Copying grub.cfg..."
 if [[ -e "$device_grub_conf" ]]
@@ -351,6 +364,7 @@ boot_update
 }
 
 create_vs_update() {
+clear
 while :
 do
 cat << _EOF_
@@ -390,7 +404,7 @@ run_options "$@"
 hello_world
 test_condition
 
-##: grub_confURE
+##: MULTIBOOT
 create_vs_update
 
 ##: AU REVOIR
