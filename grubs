@@ -112,9 +112,9 @@ cat << _EOF_
 
 Howdy! $script_name transforms a standard USB stick into a dual-purpose DEVICE
 that is both a storage medium usable under Linux, Windows, and Mac OS and a
-GRUB boot script_device packing multiple Linux distros.
+GRUB boot device packing multiple Linux distros.
 
-See: "Transform a USB stick into a boot script_device packing multiple Linux distros"
+See: "Transform a USB stick into a boot device packing multiple Linux distros"
 http://www.circuidipity.com/multi-boot-usb.html
 
 ### WARNING ###
