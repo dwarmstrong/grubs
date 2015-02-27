@@ -28,7 +28,7 @@ Usage
 
 **3.** Edit sample ``grub.cfg`` with entries for the Linux images to be copied to the device. Each distro is a little bit different in the manner its booted by GRUB.
 
-**4.** Run ``sudo /path/to/grubs [OPTION] DEVICE``. Example: installs GRUB and Linux distros on a USB stick identified as ``/dev/sde1``: 
+**4.** Run ``sudo /path/to/grubs [OPTION] DEVICE``. Example: install GRUB and Linux distros to a partition on a USB stick identified as ``/dev/sde1``: 
 
 .. code-block:: console
 
