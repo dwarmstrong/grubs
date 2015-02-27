@@ -22,12 +22,8 @@ script_synopsis="$script_command [OPTION] DEVICE"
 script_src="https://github.com/vonbrownie/grubs/blob/master/grubs"
 script_depends="grub2-common, dosfstools, rsync"
 script_device="${@: -1}"
-## -------------- MODIFY -------------- ##
-## Location of Linux iso images
-iso_dir="$HOME/GRUBS/iso"
-## GRUB grub.cfg for the USB stick
-grub_conf="$HOME/GRUBS/grub.cfg"
-## ------------------------------------ ##
+iso_dir="" # location of Linux iso images
+grub_conf="" # GRUB grub.cfg for the USB stick
 
 # Functions
 echo_red() {
