@@ -71,7 +71,7 @@ script_options
 cat << _EOF_
 EXAMPLE
   Prepare a USB stick partition identified as /dev/sde1:
-  $ sudo $script_command -i $iso_dir -c $grub_conf sde1
+  $ sudo $script_command -i ~/GRUBS/iso -c ~/GRUBS/grub.cfg sde1
 _EOF_
 }
 
@@ -195,9 +195,7 @@ then
 echo ""
 echo_red "$( penguinista ) .: ERROR: '$iso_dir' not a valid location."
 cat << _EOF_
-FIX: Set a temporary location with '-i /path/to/linux/iso_images' option
-or a permanent location by opening $script_name in a text editor and modifying
-the 'iso_dir' variable.
+FIX: Set a location with '-i /path/to/linux/iso_images' option.
 
 _EOF_
 exit 1
@@ -207,8 +205,7 @@ then
 echo ""
 echo_red "$( penguinista ) .: ERROR: '$grub_conf' not a valid file."
 cat << _EOF_
-FIX: Set a temporary configuration file with '-c /path/to/usb_stick/grub.cfg' option
-or a permanent file by opening $script_name in a text editor and modifying the 'grub_conf' variable.
+FIX: Set a configuration file with '-c /path/to/usb_stick/grub.cfg' option.
 
 _EOF_
 exit 1
@@ -375,12 +372,12 @@ read -n 1 -p "Your choice? [0-1] > "
 
 case $REPLY in
     0)	echo ""
-        echo "OK... INSTALLing..."
+        echo "OK... INSTALL..."
 	    boot_create
 	    break
 	    ;;      
     1)	echo ""
-        echo "OK... UPDATing..."
+        echo "OK... UPDATE..."
 	    boot_update
 	    break
 	    ;;
