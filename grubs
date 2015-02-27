@@ -24,9 +24,9 @@ script_depends="grub2-common, dosfstools, rsync"
 script_device="${@: -1}"
 ## -------------- MODIFY -------------- ##
 ## Location of Linux iso images
-iso_dir="$HOME/grubs/iso"
+iso_dir="$HOME/GRUBS/iso"
 ## GRUB grub.cfg for the USB stick
-grub_conf="$HOME/grubs/grub.cfg"
+grub_conf="$HOME/GRUBS/grub.cfg"
 ## ------------------------------------ ##
 
 # Functions
@@ -74,8 +74,8 @@ echo_cyan "SYNOPSIS: $script_synopsis"
 script_options
 cat << _EOF_
 EXAMPLE
-  Prepare a USB stick partition identified as /dev/sdb1:
-  $ sudo $script_command -i $iso_dir -c $grub_conf sdb1
+  Prepare a USB stick partition identified as /dev/sde1:
+  $ sudo $script_command -i $iso_dir -c $grub_conf sde1
 _EOF_
 }
 
@@ -308,7 +308,7 @@ mountpoint=$(mount | grep $script_device | awk '{print $3}')
 # Install GRUB to the Master Boot Record (MBR) of the USB script_device
 echo ""
 echo "Installing GRUB to MBR of ${script_device:0:3}..."
-grub-install --force --no-floppy --boot-directory=${mountpoint}/boot /dev/${script_device:0:3}
+grub-install --force --no-floppy --root-directory=$mountpoint /dev/${script_device:0:3}
 echo ""
 }
 
