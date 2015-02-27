@@ -279,7 +279,7 @@ then
     umountdir
     echo ""
     echo "Creating FAT32 filesystem on ${script_device}..."
-    mkfs.vfat -n multiboot /dev/${script_device}
+    mkfs.vfat -n MULTIBOOT /dev/${script_device}
     echo ""
     break
 elif [[ $REPLY == [nN] || $REPLY == "" ]]
