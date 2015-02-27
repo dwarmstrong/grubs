@@ -11,7 +11,7 @@ Requires: ``GRUB2``, ``rsync``
 Usage
 =====
 
-**0.** `Download GRUBS <https://github.com/vonbrownie/grubs/archive/master.zip>`_, unpack, and copy ``grubs-master/grubs`` script to a location in copy. Example:
+**0.** `Download GRUBS <https://github.com/vonbrownie/grubs/archive/master.zip>`_, unpack, and copy ``grubs-master/grubs`` script to a location in PATH. Example:
 
 .. code-block:: bash
 
