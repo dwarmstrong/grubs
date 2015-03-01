@@ -333,7 +333,9 @@ echo "Copying Linux *.iso files..."
 rsync --recursive --update --delete --progress --modify-window=1 \
     --include '*iso' --exclude '*' ${iso_dir}/ ${mountpoint}/iso/
 # Copy memtest<VERSION>.bin
-cp ${iso_dir}/*.bin ${mountpoint}/boot/
+if ls ${iso_dir}/*.bin 2>/dev/null 1>&2; then
+  cp -v ${iso_dir}/*.bin ${mountpoint}/boot/
+fi
 sleep 15
 echo ""
 }
