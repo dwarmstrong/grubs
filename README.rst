@@ -11,18 +11,18 @@ Requires: ``GRUB2``, ``rsync``
 Usage
 =====
 
-**0.** `Download GRUBS <https://github.com/vonbrownie/grubs/archive/master.zip>`_, unpack, and copy ``grubs-master/grubs`` script to a location in PATH. Example:
+**0.** Download and copy ``grubs-master/grubs`` script to a location in PATH. Example:
 
 .. code-block:: bash
 
-    $ sudo cp grubs-master/grubs /usr/local/bin
+    $ sudo cp grubs /usr/local/bin
 
 **1.** Create a folder to hold Linux distro images and ``grub.cfg``. Example:
 
 .. code-block:: bash
 
     $ mkdir -p ~/GRUBS/iso
-    $ cp grubs-master/grub.cfg ~/GRUBS
+    $ cp grub.cfg.sample ~/GRUBS/grub.cfg
 
 **2.** Download Linux distro images and place in ``~/GRUBS/iso``.
 
@@ -45,7 +45,6 @@ Author
 
 | Daniel Wayne Armstrong (aka) VonBrownie
 | http://www.circuidipity.com
-| https://twitter.com/circuidipity
 
 License
 =======
