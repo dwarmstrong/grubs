@@ -11,7 +11,7 @@ Requires: ``GRUB2``, ``rsync``
 Usage
 =====
 
-**0.** Download and copy ``grubs-master/grubs`` script to a location in PATH. Example:
+**0.** Download and copy ``grubs`` script to a location in PATH. Example:
 
 .. code-block:: bash
 
