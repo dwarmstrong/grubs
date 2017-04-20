@@ -1,5 +1,4 @@
-*.bin
-*.iso
-dist/
-tar-*
 _*
+*.iso
+*.ms5
+initrd.gz
