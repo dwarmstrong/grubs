@@ -2,4 +2,5 @@ _*
 *.bak
 *.iso
 *.ms5
+*.sig
 initrd.gz
