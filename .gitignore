@@ -3,4 +3,5 @@ _*
 *.iso
 *.ms5
 *.sig
+grub.cfg
 initrd.gz
