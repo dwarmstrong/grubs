@@ -1,6 +1,13 @@
 #!/bin/bash
 set -eu
 
+# NAME="Library.sh"
+# BLURB="A library of functions for bash shell scripts"
+
+# Place in local directory and call its functions by adding to script ...
+#
+# . ./Library.sh
+
 # ANSI escape codes
 RED="\033[1;31m"
 GREEN="\033[1;32m"
@@ -61,7 +68,6 @@ do
 done
 }
 
-
 L_banner_begin() {
 L_echo_yellow "\n\t\t*** $1 BEGIN ***\n"
 }
@@ -72,20 +78,65 @@ L_echo_green "\n\t\t*** $1 END ***\n"
 }
 
 
+L_sig_ok() {
+L_echo_green "--> [ OK ]"
+}
+
+
+L_sig_fail() {
+L_echo_red "--> [ FAIL ]"
+}
+
+
 L_mktemp_dir_pwd() {
-# Helpful! https://stackoverflow.com/a/34676160
+# helpful! https://stackoverflow.com/a/34676160
 # directory of this script
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+local DIR
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# temp directory created, within $DIR
+local WORK_DIR
+    WORK_DIR=$( mktemp -d -p "$DIR" )
+if [[ ! "$WORK_DIR" || ! -d "$WORK_DIR" ]]
+then
+    exit 1
+fi
+echo "$WORK_DIR"
+}
 
-# the temp directory used, within $DIR
-WORK_DIR=$( mktemp -d -p "$DIR" )
 
-# check if tmp dir was created
-if [[ ! "$WORK_DIR" || ! -d "$WORK_DIR" ]]; then
-  echo "Could not create temp dir"
-  exit 1
+L_mnt_detect() {
+mount | grep "/dev/$1" | cut -d' ' -f1-3
+}
+
+
+L_mnt_mount_vfat() {
+# $1 is sd[a-z][0-9] and $2 is MOUNTPOINT
+local _UID
+    _UID="1000"
+local _GID
+    _GID="1000"
+# helpful! https://help.ubuntu.com/community/Mount/USB#Mount_the_Drive
+# extra MNT_OPTS allow read and write on drive with regular username
+local MNT_OPTS
+    MNT_OPTS="uid=$_UID,gid=$_GID,utf8,dmask=027,fmask=137"
+sudo mount -t vfat /dev/"$1" "$2" -o $MNT_OPTS
+# confirm
+if [[ ! $( L_mnt_detect "$1" ) ]]
+then
+    exit 1
 fi
 }
+
+L_mnt_umount() {
+# $1 is sd[a-z][0-9]
+sudo umount /dev/"$1"
+# confirm
+if [[ $( L_mnt_detect "$1" ) ]]
+then
+    exit 1
+fi
+}
+
 
 L_all_done() {
 AUREVOIR="All done!"
