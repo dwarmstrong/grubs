@@ -127,16 +127,31 @@ then
 fi
 }
 
-L_mnt_umount() {
-# $1 is sd[a-z][0-9]
-sudo umount /dev/"$1"
+L_mnt_mount() {
+sudo mount "$1"
 # confirm
-if [[ $( L_mnt_detect "$1" ) ]]
+if [[ ! $( L_mnt_detect "$1" ) ]]
 then
+    L_sig_fail
     exit 1
 fi
 }
 
+
+L_mnt_umount() {
+sudo umount "$1"
+# confirm
+if [[ $( L_mnt_detect "$1" ) ]]
+then
+    L_sig_fail
+    exit 1
+fi
+}
+
+
+L_bak_file() {
+for f in "$@"; do cp "$f" "$f.$(date +%FT%H%M%S).bak"; done
+}
 
 L_all_done() {
 AUREVOIR="All done!"
