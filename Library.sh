@@ -128,7 +128,10 @@ fi
 }
 
 L_mnt_mount() {
-sudo mount "$1"
+# $1 is sd[a-z][0-9] and $2 is MOUNTPOINT
+local M_DEVICE
+    M_DEVICE="$( mount | grep "$1" | cut -d' ' -f1 )"
+sudo mount "/dev/$1" "$2"
 # confirm
 if [[ ! $( L_mnt_detect "$1" ) ]]
 then
@@ -139,7 +142,10 @@ fi
 
 
 L_mnt_umount() {
-sudo umount "$1"
+# $1 is sd[a-z][0-9]
+local M_DEVICE
+    M_DEVICE="$( mount | grep "$1" | cut -d' ' -f1 )"
+sudo umount "$M_DEVICE"
 # confirm
 if [[ $( L_mnt_detect "$1" ) ]]
 then
