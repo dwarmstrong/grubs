@@ -112,10 +112,6 @@ local TASK
     TASK="GRUB INSTALL"
 L_banner_begin "$TASK"
 
-if [[ ! $( L_mnt_detect "$USB_DEVICE" ) ]]
-then
-    L_mnt_mount "$USB_DEVICE"
-fi
 local MNTPOINT
     MNTPOINT="$(  L_mnt_detect "$USB_DEVICE" | cut -d' ' -f3)"
 local INSTALL_OPTS
@@ -126,7 +122,6 @@ local DEVICE
     DEVICE="/dev/$( echo "$USB_DEVICE" | cut -c -3 )"
 local GRUB_CMD
     GRUB_CMD="$INSTALL_OPTS $BOOT_DIR $DEVICE"
-
 sudo grub-install $GRUB_CMD
 echo "Install GRUB to the Master Boot Record (MBR) of $USB_DEVICE"
 L_sig_ok
@@ -153,6 +148,7 @@ else
 fi
 echo "Device $USB_DEVICE mounted on $MNTPOINT"
 L_sig_ok
+
 local SRC_BOOT
     SRC_BOOT="$DIR/boot"
 local MNTPOINT_BOOT
@@ -161,7 +157,6 @@ local SRC_CFG
     SRC_CFG="$SRC_BOOT/grub/grub.cfg"
 local MNT_CFG
     MNT_CFG="$MNTPOINT_BOOT/grub/grub.cfg"
-
 if [[ -f "$MNT_CFG" ]]
 then
     #echo "L_bak_file $MNT_CFG" #TEST
@@ -181,7 +176,6 @@ local R_OPTS
     R_OPTS="--recursive --update --delete --progress --modify-window=1"
 local R_EXCLUDE
     R_EXCLUDE="--exclude-from=$DIR/.config"
-
 #echo "rsync $R_OPTS $R_EXCLUDE $SRC_BOOT/ $MNTPOINT_BOOT/" #TEST
 rsync $R_OPTS $R_EXCLUDE $SRC_BOOT/ $MNTPOINT_BOOT/
 echo "Rsync $SRC_BOOT/ ---> $MNTPOINT_BOOT/"
@@ -191,16 +185,20 @@ L_banner_end "$TASK"
 
 
 cleanup() {
-local MNTPOINT
-    MNTPOINT="$(  L_mnt_detect "$USB_DEVICE" | cut -d' ' -f3)"
-echo "sudo umount $MNTPOINT" #TEST
-L_mnt_umount "$MNTPOINT"
-echo "Unmount $USB_DEVICE"
-L_sig_ok
+if [[ $(  L_mnt_detect "$USB_DEVICE" ) ]]
+then
+    local MNTPOINT
+        MNTPOINT="$(  L_mnt_detect "$USB_DEVICE" | cut -d' ' -f3)"
+    #echo "sudo umount $MNTPOINT" #TEST
+    L_mnt_umount "$MNTPOINT"
+    echo "Unmount $USB_DEVICE on $MNTPOINT"
+    L_sig_ok
+fi
 
 local DIR
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo "find $DIR -type d -name 'tmp.*' -exec rmdir '{}' +" #TEST
+#echo "find $DIR -type d -name 'tmp.*' -exec rmdir '{}' +" #TEST
+find "$DIR" -type d -name 'tmp.*' -exec rmdir '{}' +
 echo "Remove temporary work directory"
 L_sig_ok
 }
@@ -243,6 +241,8 @@ DESCRIPTION
     Linux distro ISO files.
 
     More info: http://www.circuidipity.com/multi-boot-usb.html
+DEPENDS
+    grub2, bash, sudo, rsync
 SOURCE
     $SOURCE
 
@@ -288,10 +288,10 @@ case $REPLY in
         echo ""
         L_banner_begin "$TASK1"
         echo -e "Steps ...\n0) $ST0\n1) $ST1\n2) $ST2\n3) $ST3"
-        #format_partition
-        #make_bootdir
-        #grub_install
-        #sync_bootdir
+        format_partition
+        make_bootdir
+        grub_install
+        sync_bootdir
         cleanup
         L_banner_end "$TASK1"
         break
