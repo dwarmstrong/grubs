@@ -47,11 +47,11 @@ menuentry "Debian Jessie - 32bit Netinst+firmware" {
     initrd /boot/debian/install.386/initrd.gz
 }
 
-menuentry "Ubuntu 17.04 - 64bit Mini-Installer" {
-    set iso="/boot/iso/ubuntu-1704-amd64-mini.iso"
+menuentry "Lubuntu 16.04 - 64bit Live Mode + Desktop Installer" {
+    set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
     loopback loop $iso
-    linux (loop)/linux boot=casper iso-scan/filename=$iso noprompt noeject
-    initrd (loop)/initrd.gz
+    linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
+    initrd (loop)/casper/initrd.lz
 }
 
 menuentry "Ubuntu 16.04 LTS - 64bit Mini-Installer" {
@@ -61,10 +61,17 @@ menuentry "Ubuntu 16.04 LTS - 64bit Mini-Installer" {
     initrd (loop)/initrd.gz
 }
 
-menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
+menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer" {
     set iso="/boot/iso/ubuntu-1604-i386-mini.iso"
     loopback loop $iso
     linux (loop)/linux boot=casper iso-scan/filename=$iso noprompt noeject
+    initrd (loop)/initrd.gz
+}
+
+menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
+    set iso="/boot/iso/ubuntu-1604-i386-mini.iso"
+    loopback loop $iso
+    linux (loop)/linux boot=casper iso-scan/filename=$iso noprompt noeject forcepae
     initrd (loop)/initrd.gz
 }
 
