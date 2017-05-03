@@ -1,7 +1,7 @@
 _*
 *.bak
 *.iso
-*.ms5
+*.md5
 *.sig
 grub.cfg
 initrd.gz
