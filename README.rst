@@ -2,9 +2,7 @@
 GRUBS Reanimated USB Boot Stick
 ===============================
 
-**GRUBS**
-
-GRUBS is a shell script for transforming removable USB storage into a dual-purpose device that is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot device capable of loopback mounting Linux distro ISO files.
+**GRUBS** is a shell script for transforming removable USB storage into a dual-purpose device that is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot device capable of loopback mounting Linux distro ISO files.
 
 Depends: ``grub2``, ``bash``, ``sudo``, ``rsync``
 
