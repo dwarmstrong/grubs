@@ -2,41 +2,39 @@
 GRUBS Reanimated USB Boot Stick
 ===============================
 
-**GRUBS** is a Bash script for transforming a USB stick into a dual-purpose device that is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot device packing multiple Linux distros.
+**GRUBS**
 
-See: `Transform a USB stick into a boot device packing multiple Linux distros <http://www.circuidipity.com/multi-boot-usb.html>`_
+GRUBS is a shell script for transforming removable USB storage into a dual-purpose device that is both a storage medium usable under Linux, Windows, and Mac OS and a GRUB boot device capable of loopback mounting Linux distro ISO files.
 
-Requires: ``GRUB2``, ``rsync``
+Depends: ``grub2``, ``bash``, ``sudo``, ``rsync``
+
+Synopsis
+========
+
+.. code-block:: bash
+
+    grubs.sh [ options ] USB_DEVICE_PARTITION
+
+Example: Prepare a USB storage device partition identified as ``/dev/sde1`` ...
+
+.. code-block:: bash
+
+    $ grubs.sh sde1
 
 Usage
 =====
 
-**0.** Download and copy ``grubs`` script to a location in PATH. Example:
+**0.** Download Linux distro image (ISO) files and place in ``boot/iso``.
 
-.. code-block:: bash
+**1.** Copy ``boot/grub/grub.cfg.sample`` to ``boot/grub/grub.cfg`` and write entries for the ISO files to be copied to the USB device. Note that each Linux distro is a bit different in the manner its booted by GRUB. This can require a bit of research.
 
-    $ sudo cp grubs /usr/local/bin
+**2.** Run program!
 
-**1.** Create a folder to hold Linux distro images and ``grub.cfg``. Example:
+**3.** Reboot. Configure the BIOS to accept removable USB storage as boot device. Reboot and GRUB displays a menu of the Linux distros installed on the USB device. Launch and enjoy!
 
-.. code-block:: bash
+When finished, simply reboot and return to using the USB device as a VFAT-formatted storage medium.
 
-    $ mkdir -p ~/GRUBS/iso
-    $ cp grub.cfg.sample ~/GRUBS/grub.cfg
-
-**2.** Download Linux distro images and place in ``~/GRUBS/iso``.
-
-**3.** Edit sample ``grub.cfg`` with entries for the Linux images to be copied to the device. Each distro is a little bit different in the manner its booted by GRUB.
-
-**4.** Run ``sudo /path/to/grubs [OPTION] DEVICE``. Example: install GRUB and Linux distros to a partition on a USB stick identified as ``/dev/sde1``: 
-
-.. code-block:: console
-
-    $ sudo /usr/local/bin/grubs -i ~/GRUBS/iso -c ~/GRUBS/grub.cfg sde1
-
-See ``grubs -h`` for options.
-
-Reboot, select the USB stick (depends on BIOS) as boot device and GRUB will display a menu of the installed Linux distro images. Reboot again and return to using your USB stick as a regular storage device.
+For more details: `Transform a USB stick into a boot device packing multiple Linux distros <http://www.circuidipity.com/multi-boot-usb.html>`_
 
 Happy hacking!
 

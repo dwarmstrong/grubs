@@ -1,9 +1,9 @@
 #!/bin/bash
 set -eu
 
-NAME="GRUBS Reanimated USB Boot Stick"
-#BLURB="Transform USB storage into boot device packing multiple Linux distros"
-SOURCE="https://github.com/vonbrownie/grubs"
+# NAME="GRUBS Reanimated USB Boot Stick"
+# BLURB="Transform USB storage into boot device packing multiple Linux distros"
+# SOURCE="https://github.com/vonbrownie/grubs"
 
 # Copyright (c) 2014 Daniel Wayne Armstrong. All rights reserved.
 # This program is free software: you can redistribute it and/or modify it
@@ -28,7 +28,7 @@ STEP3="Sync files from grubs/boot to MOUNTPOINT/boot on $USB_DEVICE"
 
 
 L_run_options "$@"
-L_greeting "$NAME" "$SOURCE"
+L_greeting
 L_test_usb_device  # Verify that USB_DEVICE_PARTITION is available for use.
 L_run_script
 while :
@@ -67,7 +67,7 @@ case $REPLY in
         ;;
     2)  echo ""
         L_penguin
-        exit 0
+        exit
         ;;
     *)  L_invalid_reply
         ;;

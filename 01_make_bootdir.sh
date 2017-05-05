@@ -18,7 +18,7 @@ else
 fi
 echo "Device $USB_DEVICE mounted on [$MNTPOINT]"
 L_sig_ok
-#echo "sudo mkdir -pv $MNTPOINT/boot/{grub,iso,debian}" #TEST
+
 sudo mkdir -pv "$MNTPOINT"/boot/{grub,iso,debian}
 L_sig_ok
 L_banner_end "MAKE BOOTDIR"

@@ -39,10 +39,14 @@ _EOF_
 
 
 L_greeting() {
+local SCRIPT_NAME
+    SCRIPT_NAME="GRUBS Reanimated USB Boot Stick"
+local SCRIPT_SOURCE
+    SCRIPT_SOURCE="https://github.com/vonbrownie/grubs"
 echo -e "\n$( L_penguin ) .: Howdy!"
 cat << _EOF_
 NAME
-    $1
+    $SCRIPT_NAME
 SYNOPSIS
     grubs.sh [ options ] USB_DEVICE_PARTITION
 OPTIONS
@@ -56,11 +60,12 @@ DESCRIPTION
     Windows, and Mac OS and a GRUB boot device capable of loopback mounting
     Linux distro ISO files.
 
-    More info: http://www.circuidipity.com/multi-boot-usb.html
+    See the README before first use about placing ISO files in boot/iso and
+    crafting a GRUB configuration file.
 DEPENDS
     grub2, bash, sudo, rsync
 SOURCE
-    $2
+    $SCRIPT_SOURCE
 
 _EOF_
 }
@@ -71,11 +76,11 @@ while getopts ":h" OPT
 do
     case $OPT in
         h)
-            greeting
+            L_greeting
             exit
             ;;
         ?)
-            greeting
+            L_greeting
             L_echo_red "\n$( L_penguin ) .: ERROR: Invalid option '-$OPTARG'"
             exit 1
             ;;
@@ -175,12 +180,9 @@ L_echo_red "--> [ FAIL ]"
 
 
 L_mktemp_dir_pwd() {
-# helpful! https://stackoverflow.com/a/34676160
-# directory of this script
+# Create a workspace directory within DIR
 local DIR
-    #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     DIR="$(pwd)"
-# temp directory created, within $DIR
 local WORK_DIR
     WORK_DIR=$( mktemp -d -p "$DIR" )
 if [[ ! "$WORK_DIR" || ! -d "$WORK_DIR" ]]; then
@@ -201,12 +203,11 @@ local _UID
     _UID="1000"
 local _GID
     _GID="1000"
-# helpful! https://help.ubuntu.com/community/Mount/USB#Mount_the_Drive
-# extra MNT_OPTS allow read and write on drive with regular username
+# Helpful! https://help.ubuntu.com/community/Mount/USB#Mount_the_Drive
+# Extra MNT_OPTS allow read and write on drive with regular username
 local MNT_OPTS
     MNT_OPTS="uid=$_UID,gid=$_GID,utf8,dmask=027,fmask=137"
 sudo mount -t vfat /dev/"$1" "$2" -o $MNT_OPTS
-# confirm
 if [[ ! $( L_mnt_detect "$1" ) ]]; then
     exit 1
 fi
@@ -243,11 +244,12 @@ for f in "$@"; do cp "$f" "$f.$(date +%FT%H%M%S).bak"; done
 }
 
 L_all_done() {
-AUREVOIR="All done!"
+local AU_REVOIR
+    AU_REVOIR="All done!"
 if [[ -x "/usr/games/cowsay" ]]; then
-    /usr/games/cowsay "$AUREVOIR"
+    /usr/games/cowsay "$AU_REVOIR"
 else
-    echo -e "$( L_penguin ) .: $AUREVOIR"
+    echo -e "$( L_penguin ) .: $AU_REVOIR"
 fi
 }
 
