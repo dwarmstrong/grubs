@@ -19,9 +19,11 @@ L_echo_red() {
 echo -e "${RED}$1${NC}"
 }
 
+
 L_echo_green() {
 echo -e "${GREEN}$1${NC}"
 }
+
 
 L_echo_yellow() {
 echo -e "${YELLOW}$1${NC}"
@@ -36,6 +38,74 @@ _EOF_
 }
 
 
+L_greeting() {
+echo -e "\n$( L_penguin ) .: Howdy!"
+cat << _EOF_
+NAME
+    $1
+SYNOPSIS
+    grubs.sh [ options ] USB_DEVICE_PARTITION
+OPTIONS
+    -h    print details
+EXAMPLE
+    Prepare a USB storage device partition identified as /dev/sde1:
+        $ grubs.sh sde1
+DESCRIPTION
+    GRUBS is a shell script for transforming removable USB storage into a
+    dual-purpose device that is both a storage medium usable under Linux,
+    Windows, and Mac OS and a GRUB boot device capable of loopback mounting
+    Linux distro ISO files.
+
+    More info: http://www.circuidipity.com/multi-boot-usb.html
+DEPENDS
+    grub2, bash, sudo, rsync
+SOURCE
+    $2
+
+_EOF_
+}
+
+
+L_run_options() {
+while getopts ":h" OPT
+do
+    case $OPT in
+        h)
+            greeting
+            exit
+            ;;
+        ?)
+            greeting
+            L_echo_red "\n$( L_penguin ) .: ERROR: Invalid option '-$OPTARG'"
+            exit 1
+            ;;
+    esac
+done
+}
+
+
+L_test_usb_device() {
+# Verify that USB_DEVICE_PARTITION is available for use.
+local ERR0
+    ERR0="ERROR: script requires the USB_DEVICE_PARTITION argument."
+local ERR1
+    ERR1="ERROR: '$USB_DEVICE' not available for use."
+local FIX0
+    FIX0="FIX: run script with a (valid) DEVICE as 'grubs.sh sd[b-z]1'."
+if [[ -z "$USB_DEVICE" ]]; then
+    L_echo_red "\n$( L_penguin ) .: $ERR0"
+    L_echo_red "$FIX0"
+    exit 1
+fi
+if [[ ! -b /dev/$USB_DEVICE ]] || [[ ! $USB_DEVICE == sd[b-z]1 ]]; then
+    echo ""
+    L_echo_red "$( L_penguin ) .: $ERR1"
+    L_echo_red "$FIX0"
+    exit 1
+fi
+L_echo_yellow "\nYou have chosen **$USB_DEVICE** as USB_DEVICE_PARTITION.\n"
+}
+
 L_invalid_reply() {
 L_echo_red "\n'${REPLY}' is invalid input..."
 }
@@ -49,17 +119,33 @@ L_run_script() {
 while :
 do
     read -n 1 -p "Run script now? [yN] > "
-    if [[ $REPLY == [yY] ]]
-    then
+    if [[ $REPLY == [yY] ]]; then
         echo -e "\nLet's roll then ..."
         sleep 2
-        if [[ -x "/usr/games/sl" ]]
-        then
+        if [[ -x "/usr/games/sl" ]]; then
             /usr/games/sl
         fi
         break
-    elif [[ $REPLY == [nN] || $REPLY == "" ]]
-    then
+    elif [[ $REPLY == [nN] || $REPLY == "" ]]; then
+        echo -e "\n$( L_penguin )"
+        exit
+    else
+        L_invalid_reply_yn
+    fi
+done
+}
+
+L_create_warning() {
+L_echo_red "\n\n\t\t### WARNING ###"
+L_echo_red "Make careful note of the drive partition labels on your system!\n"
+L_echo_red "INSTALL option will **destroy all data** currently stored on the"
+L_echo_red "chosen partition **$USB_DEVICE**.\n"
+while :
+do
+    read -n 1 -p "Proceed with INSTALL? [yN] > "
+    if [[ $REPLY == [yY] ]]; then
+        break
+    elif [[ $REPLY == [nN] || $REPLY == "" ]]; then
         echo -e "\n$( L_penguin )"
         exit
     else
@@ -92,12 +178,12 @@ L_mktemp_dir_pwd() {
 # helpful! https://stackoverflow.com/a/34676160
 # directory of this script
 local DIR
-    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    DIR="$(pwd)"
 # temp directory created, within $DIR
 local WORK_DIR
     WORK_DIR=$( mktemp -d -p "$DIR" )
-if [[ ! "$WORK_DIR" || ! -d "$WORK_DIR" ]]
-then
+if [[ ! "$WORK_DIR" || ! -d "$WORK_DIR" ]]; then
     exit 1
 fi
 echo "$WORK_DIR"
@@ -121,8 +207,7 @@ local MNT_OPTS
     MNT_OPTS="uid=$_UID,gid=$_GID,utf8,dmask=027,fmask=137"
 sudo mount -t vfat /dev/"$1" "$2" -o $MNT_OPTS
 # confirm
-if [[ ! $( L_mnt_detect "$1" ) ]]
-then
+if [[ ! $( L_mnt_detect "$1" ) ]]; then
     exit 1
 fi
 }
@@ -133,8 +218,7 @@ local M_DEVICE
     M_DEVICE="$( mount | grep "$1" | cut -d' ' -f1 )"
 sudo mount "/dev/$1" "$2"
 # confirm
-if [[ ! $( L_mnt_detect "$1" ) ]]
-then
+if [[ ! $( L_mnt_detect "$1" ) ]]; then
     L_sig_fail
     exit 1
 fi
@@ -147,8 +231,7 @@ local M_DEVICE
     M_DEVICE="$( mount | grep "$1" | cut -d' ' -f1 )"
 sudo umount "$M_DEVICE"
 # confirm
-if [[ $( L_mnt_detect "$1" ) ]]
-then
+if [[ $( L_mnt_detect "$1" ) ]]; then
     L_sig_fail
     exit 1
 fi
@@ -161,8 +244,7 @@ for f in "$@"; do cp "$f" "$f.$(date +%FT%H%M%S).bak"; done
 
 L_all_done() {
 AUREVOIR="All done!"
-if [[ -x "/usr/games/cowsay" ]]
-then
+if [[ -x "/usr/games/cowsay" ]]; then
     /usr/games/cowsay "$AUREVOIR"
 else
     echo -e "$( L_penguin ) .: $AUREVOIR"
