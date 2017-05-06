@@ -1,5 +1,6 @@
 _*
 *.bak
 *.iso
+*.md5
 grub.cfg
 initrd.gz

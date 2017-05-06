@@ -53,7 +53,7 @@ OPTIONS
     -h    print details
 EXAMPLE
     Prepare a USB storage device partition identified as /dev/sde1:
-        $ grubs.sh sde1
+        $ ./grubs.sh sde1
 DESCRIPTION
     GRUBS is a shell script for transforming removable USB storage into a
     dual-purpose device that is both a storage medium usable under Linux,
