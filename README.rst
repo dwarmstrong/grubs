@@ -17,7 +17,7 @@ Example: Prepare a USB storage device partition identified as ``/dev/sde1`` ...
 
 .. code-block:: bash
 
-    $ grubs.sh sde1
+    $ ./grubs.sh sde1
 
 Usage
 =====
