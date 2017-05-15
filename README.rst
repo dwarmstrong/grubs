@@ -24,7 +24,7 @@ Usage
 
 **0.** Download Linux distro image (ISO) files and place in ``boot/iso``.
 
-**1.** Copy ``boot/grub/grub.cfg.sample`` to ``boot/grub/grub.cfg`` and write entries for the ISO files to be copied to the USB device. To use the sample entries will require separately downloading the matching ISO files. For other ISO files, please note that each Linux distro is a bit different in the manner its booted by GRUB. This can require a bit of research.
+**1.** Copy ``boot/grub/grub.cfg.sample`` to ``boot/grub/grub.cfg`` and write entries for the ISO files to be copied to the USB device. To use the sample entries will require separately downloading the matching ISO files. For other ISO files, please note that each Linux distro is a bit different in the manner its booted by GRUB and may require a bit of research. `This post on boot entries for a number of distributions on the Arch Linux Wiki <https://wiki.archlinux.org/index.php/Multiboot_USB_drive#Boot_entries_for_other_distributions>`_ might prove helpful.
 
 **2.** Run program!
 
