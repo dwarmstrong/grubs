@@ -30,6 +30,36 @@ echo -e "${YELLOW}$1${NC}"
 }
 
 
+L_banner_begin() {
+L_echo_yellow "\n\t\t*** $1 BEGIN ***\n"
+}
+
+
+L_banner_end() {
+L_echo_green "\n\t\t*** $1 END ***\n"
+}
+
+
+L_sig_ok() {
+L_echo_green "--> [ OK ]"
+}
+
+
+L_sig_fail() {
+L_echo_red "--> [ FAIL ]"
+}
+
+
+L_invalid_reply() {
+L_echo_red "\n'${REPLY}' is invalid input..."
+}
+
+
+L_invalid_reply_yn() {
+L_echo_red "\n'${REPLY}' is invalid input. Please select 'Y(es)' or 'N(o)'..."
+}
+
+
 L_penguin() {
 cat << _EOF_
 (O<
@@ -50,7 +80,8 @@ NAME
 SYNOPSIS
     grubs.sh [ options ] USB_DEVICE_PARTITION
 OPTIONS
-    -h    print details
+    -h  print details
+    -u  skip the menu prompt and UPDATE the USB_DEVICE_PARTITION       
 EXAMPLE
     Prepare a USB storage device partition identified as /dev/sde1:
         $ ./grubs.sh sde1
@@ -71,24 +102,6 @@ _EOF_
 }
 
 
-L_run_options() {
-while getopts ":h" OPT
-do
-    case $OPT in
-        h)
-            L_greeting
-            exit
-            ;;
-        ?)
-            L_greeting
-            L_echo_red "\n$( L_penguin ) .: ERROR: Invalid option '-$OPTARG'"
-            exit 1
-            ;;
-    esac
-done
-}
-
-
 L_test_usb_device() {
 # Verify that USB_DEVICE_PARTITION is available for use.
 local ERR0
@@ -96,7 +109,7 @@ local ERR0
 local ERR1
     ERR1="ERROR: '$USB_DEVICE' not available for use."
 local FIX0
-    FIX0="FIX: run script with a (valid) DEVICE as 'grubs.sh sd[b-z]1'."
+    FIX0="FIX: run script with a (valid) DEVICE as './grubs.sh sd[b-z]1'."
 if [[ -z "$USB_DEVICE" ]]; then
     L_echo_red "\n$( L_penguin ) .: $ERR0"
     L_echo_red "$FIX0"
@@ -111,14 +124,46 @@ fi
 L_echo_yellow "\nYou have chosen **$USB_DEVICE** as USB_DEVICE_PARTITION.\n"
 }
 
-L_invalid_reply() {
-L_echo_red "\n'${REPLY}' is invalid input..."
+
+L_all_done() {
+local AU_REVOIR
+    AU_REVOIR="All done!"
+if [[ -x "/usr/games/cowsay" ]]; then
+    /usr/games/cowsay "$AU_REVOIR"
+else
+    echo -e "$( L_penguin ) .: $AU_REVOIR"
+fi
 }
 
 
-L_invalid_reply_yn() {
-L_echo_red "\n'${REPLY}' is invalid input. Please select 'Y(es)' or 'N(o)'..."
+L_run_options() {
+local STEP3
+STEP3="Sync files from grubs/boot to MOUNTPOINT/boot on $USB_DEVICE"
+while getopts ":hu" OPT
+do
+    case $OPT in
+        h)
+            L_greeting
+            exit
+            ;;
+        u)
+            L_test_usb_device 
+            L_banner_begin "UPDATE"
+            echo -e "Steps ...\n0) $STEP3"
+            ./03_sync_bootdirs.sh "$USB_DEVICE"
+            ./04_cleanup.sh "$USB_DEVICE"
+            L_banner_end "UPDATE"
+            L_all_done
+            exit
+            ;;
+        ?)
+            L_echo_red "\n$( L_penguin ) .: ERROR: Invalid option '-$OPTARG'"
+            exit 1
+            ;;
+    esac
+done
 }
+
 
 L_run_script() {
 while :
@@ -140,6 +185,7 @@ do
 done
 }
 
+
 L_create_warning() {
 L_echo_red "\n\n\t\t### WARNING ###"
 L_echo_red "Make careful note of the drive partition labels on your system!\n"
@@ -157,25 +203,6 @@ do
         L_invalid_reply_yn
     fi
 done
-}
-
-L_banner_begin() {
-L_echo_yellow "\n\t\t*** $1 BEGIN ***\n"
-}
-
-
-L_banner_end() {
-L_echo_green "\n\t\t*** $1 END ***\n"
-}
-
-
-L_sig_ok() {
-L_echo_green "--> [ OK ]"
-}
-
-
-L_sig_fail() {
-L_echo_red "--> [ FAIL ]"
 }
 
 
@@ -213,6 +240,7 @@ if [[ ! $( L_mnt_detect "$1" ) ]]; then
 fi
 }
 
+
 L_mnt_mount() {
 # $1 is sd[a-z][0-9] and $2 is MOUNTPOINT
 local M_DEVICE
@@ -241,16 +269,6 @@ fi
 
 L_bak_file() {
 for f in "$@"; do cp "$f" "$f.$(date +%FT%H%M%S).bak"; done
-}
-
-L_all_done() {
-local AU_REVOIR
-    AU_REVOIR="All done!"
-if [[ -x "/usr/games/cowsay" ]]; then
-    /usr/games/cowsay "$AU_REVOIR"
-else
-    echo -e "$( L_penguin ) .: $AU_REVOIR"
-fi
 }
 
 
