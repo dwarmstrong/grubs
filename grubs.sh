@@ -28,8 +28,8 @@ STEP3="Sync files from grubs/boot to MOUNTPOINT/boot on $USB_DEVICE"
 
 
 L_run_options "$@"
-L_greeting
 L_test_usb_device  # Verify that USB_DEVICE_PARTITION is available for use.
+L_greeting
 L_run_script
 while :
 do
