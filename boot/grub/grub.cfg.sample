@@ -18,7 +18,9 @@ set menu_color_highlight=white/green
 #set imgdevpath="/dev/disk/by-label/label_value"
 set imgdevpath="/dev/disk/by-label/MULTIBOOT"
 
-# Boot ISOs
+# Boot ISOs ... NOTE: To use these menu entries will require separately
+# downloading the matching ISO files.
+
 menuentry "SystemRescueCd 64bit" {
     set iso="/boot/iso/systemrescuecd-x86-4.9.6.iso"
     loopback loop $iso
@@ -32,6 +34,31 @@ menuentry "SystemRescueCd 32bit" {
     linux (loop)/isolinux/rescue32 isoloop=$iso setkmap=us
     initrd (loop)/isolinux/initram.igz
 }
+
+menuentry "Debian Stretch RC 3 - 64bit Mini-Installer" {
+    set iso="/boot/iso/debian-stretch-rc3-amd64-mini.iso"
+    loopback loop $iso
+    linux (loop)/linux
+    initrd (loop)/initrd.gz
+}
+
+menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
+    set iso="/boot/iso/debian-stretch-rc3-i386-mini.iso"
+    loopback loop $iso
+    linux (loop)/linux
+    initrd (loop)/initrd.gz
+}
+
+# Debian 64/32bit Netinst+firmware images
+#
+# This was a bit tricky to get working. Selecting firmware-VERSION-netinst.iso
+# from the GRUB menu would get things started but the install would fail at the
+# stage where the ISO needs to be located and mounted. Debian's netinst images
+# do not include the iso-scan package , which is required for searching and
+# loading ISO images.
+#
+# For a work-around ...
+# check out 'Step 3.1' of http://www.circuidipity.com/multi-boot-usb.html
 
 menuentry "Debian Jessie - 64bit Netinst+firmware" {
     set iso="/boot/iso/firmware-8.7.1-amd64-netinst.iso"
