@@ -3,5 +3,6 @@ _*
 *.iso
 *.md5
 *.sig
+*.txt
 grub.cfg
 initrd.gz
