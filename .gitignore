@@ -2,5 +2,6 @@ _*
 *.bak
 *.iso
 *.md5
+*.sig
 grub.cfg
 initrd.gz
