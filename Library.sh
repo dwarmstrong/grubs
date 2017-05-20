@@ -121,7 +121,7 @@ if [[ ! -b /dev/$USB_DEVICE ]] || [[ ! $USB_DEVICE == sd[b-z]1 ]]; then
     L_echo_red "$FIX0"
     exit 1
 fi
-L_echo_yellow "\nYou have chosen **$USB_DEVICE** as USB_DEVICE_PARTITION.\n"
+#L_echo_yellow "\nYou have chosen **$USB_DEVICE** as USB_DEVICE_PARTITION.\n"
 }
 
 
@@ -227,14 +227,16 @@ mount | grep "/dev/$1" | cut -d' ' -f1-3
 L_mnt_mount_vfat() {
 # $1 is sd[a-z][0-9] and $2 is MOUNTPOINT
 local _UID
-    _UID="1000"
-local _GID
-    _GID="1000"
+#    _UID="1000"
+     _UID="$UID"
+#local _GID
+#    _GID="1000"
 # Helpful! https://help.ubuntu.com/community/Mount/USB#Mount_the_Drive
 # Extra MNT_OPTS allow read and write on drive with regular username
 local MNT_OPTS
-    MNT_OPTS="uid=$_UID,gid=$_GID,utf8,dmask=027,fmask=137"
-sudo mount -t vfat /dev/"$1" "$2" -o $MNT_OPTS
+    #MNT_OPTS="uid=$_UID,gid=$_GID,utf8,dmask=027,fmask=137"
+    MNT_OPTS="uid=$_UID,utf8,dmask=027,fmask=137"
+    sudo mount -t vfat /dev/"$1" "$2" -o $MNT_OPTS
 if [[ ! $( L_mnt_detect "$1" ) ]]; then
     exit 1
 fi
