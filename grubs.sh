@@ -5,7 +5,7 @@ set -eu
 # BLURB="Transform USB storage into boot device packing multiple Linux distros"
 # SOURCE="https://github.com/vonbrownie/grubs"
 
-# Copyright (c) 2014 Daniel Wayne Armstrong. All rights reserved.
+# Copyright (c) 2017 Daniel Wayne Armstrong. All rights reserved.
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License (GPLv2) published by
 # the Free Software Foundation.
