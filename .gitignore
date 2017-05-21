@@ -1,5 +1,6 @@
 _*
 *.bak
+*.bin
 *.iso
 *.md5
 *.sig
