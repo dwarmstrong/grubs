@@ -18,22 +18,33 @@ set menu_color_highlight=white/green
 #set imgdevpath="/dev/disk/by-label/label_value"
 set imgdevpath="/dev/disk/by-label/MULTIBOOT"
 
+function cpu_props {
+	echo "GRUB's ability to analyse processors is limited, we can ask:"
+	echo " * is it 64/32bit?"
+	echo " * does it support Physical Address Extension (PAE)?"
+	if cpuid -p; then
+		pae_assessment="PAE"
+	else
+		pae_assessment="NO PAE"
+	fi
+    echo ""
+	if cpuid -l; then
+        echo "(O<"
+		echo "(/)_ .: 64-bit processor, $pae_assessment"
+	else
+        echo "(O<"
+		echo "(/)_ .: 32-bit processor, $pae_assessment"
+	fi
+}
+
+menuentry "Tell Me About This Machine's Processor" {
+	cpu_props
+	echo $"Press escape to return to the main menu"
+	sleep --interruptible 9999
+}
+
 # Boot ISOs ... NOTE: To use these menu entries will require separately
 # downloading the matching ISO files.
-
-menuentry "SystemRescueCd 64bit" {
-    set iso="/boot/iso/systemrescuecd-x86-4.9.6.iso"
-    loopback loop $iso
-    linux (loop)/isolinux/rescue64 isoloop=$iso setkmap=us
-    initrd (loop)/isolinux/initram.igz
-}
-
-menuentry "SystemRescueCd 32bit" {
-    set iso="/boot/iso/systemrescuecd-x86-4.9.6.iso"
-    loopback loop $iso
-    linux (loop)/isolinux/rescue32 isoloop=$iso setkmap=us
-    initrd (loop)/isolinux/initram.igz
-}
 
 submenu "Debian and BunsenLabs ->" {
 set menu_color_normal=white/black
@@ -96,6 +107,26 @@ menuentry "BunsenLabs Deuterium - 32bit NonPAE Installer" {
     }
 }
 
+submenu "SystemRescueCd ->" {
+set menu_color_normal=white/black
+set menu_color_highlight=white/green
+
+menuentry "SystemRescueCd 64bit" {
+    set iso="/boot/iso/systemrescuecd-x86-4.9.6.iso"
+    loopback loop $iso
+    linux (loop)/isolinux/rescue64 isoloop=$iso setkmap=us
+    initrd (loop)/isolinux/initram.igz
+}
+
+menuentry "SystemRescueCd 32bit" {
+    set iso="/boot/iso/systemrescuecd-x86-4.9.6.iso"
+    loopback loop $iso
+    linux (loop)/isolinux/rescue32 isoloop=$iso setkmap=us
+    initrd (loop)/isolinux/initram.igz
+    }
+}
+
+
 submenu "Ubuntu and Lubuntu ->" {
 set menu_color_normal=white/black
 set menu_color_highlight=white/green
@@ -121,7 +152,7 @@ menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
     initrd (loop)/initrd.gz
 }
 
-menuentry "Lubuntu 16.04 - 64bit Live Mode + Desktop Installer" {
+menuentry "Lubuntu 16.04 LTS - 64bit Live Mode + Desktop Installer" {
     set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
     loopback loop $iso
     linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
