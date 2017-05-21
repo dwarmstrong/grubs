@@ -27,17 +27,17 @@ function cpu_props {
 	echo " * is it 64/32bit?"
 	echo " * does it support Physical Address Extension (PAE)?"
 	if cpuid -p; then
-		pae_assessment="PAE"
+		pae_assessment="Yes"
 	else
-		pae_assessment="NO PAE"
+		pae_assessment="No"
 	fi
     echo ""
 	if cpuid -l; then
         echo "(O<"
-		echo "(/)_ .: 64-bit processor, $pae_assessment"
+		echo "(/)_ .: Processor: 64bit, PAE: $pae_assessment"
 	else
         echo "(O<"
-		echo "(/)_ .: 32-bit processor, $pae_assessment"
+		echo "(/)_ .: Processor: 32bit, PAE: $pae_assessment"
 	fi
 }
 
@@ -165,9 +165,12 @@ menuentry "Lubuntu 16.04 LTS - 64bit Live Mode + Desktop Installer" {
     }
 }
 
-# Memtest (if any)
-#menuentry "memtest86+" {
-#        linux16 /live/memtest
+# Hmm ... on my C720 Chromebook this memory tool would freeze on startup and
+# the machine required a hard reset.
+#menuentry "Memory test (memtest86+)" {
+#    linux16 /boot/iso/memtest86+-5.01.bin
 #}
 
-#menuentry "Reboot machine" {
+menuentry "Reboot" {
+    reboot
+}
