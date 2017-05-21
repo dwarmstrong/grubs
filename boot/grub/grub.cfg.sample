@@ -35,19 +35,9 @@ menuentry "SystemRescueCd 32bit" {
     initrd (loop)/isolinux/initram.igz
 }
 
-menuentry "Debian Stretch RC 3 - 64bit Mini-Installer" {
-    set iso="/boot/iso/debian-stretch-rc3-amd64-mini.iso"
-    loopback loop $iso
-    linux (loop)/linux
-    initrd (loop)/initrd.gz
-}
-
-menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
-    set iso="/boot/iso/debian-stretch-rc3-i386-mini.iso"
-    loopback loop $iso
-    linux (loop)/linux
-    initrd (loop)/initrd.gz
-}
+submenu "Debian and BunsenLabs ->" {
+set menu_color_normal=white/black
+set menu_color_highlight=white/green
 
 # Debian 64/32bit Netinst+firmware images
 #
@@ -63,23 +53,52 @@ menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
 menuentry "Debian Jessie - 64bit Netinst+firmware" {
     set iso="/boot/iso/firmware-8.7.1-amd64-netinst.iso"
     loopback loop $iso
-    linux (loop)/install.amd/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=788 --- quiet 
+    linux (loop)/install.amd/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
     initrd /boot/debian/install.amd/initrd.gz
 }
 
 menuentry "Debian Jessie - 32bit Netinst+firmware" {
     set iso="/boot/iso/firmware-8.7.1-i386-netinst.iso"
     loopback loop $iso
-    linux (loop)/install.386/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=788 --- quiet 
+    linux (loop)/install.386/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
     initrd /boot/debian/install.386/initrd.gz
 }
-
-menuentry "Lubuntu 16.04 - 64bit Live Mode + Desktop Installer" {
-    set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
+    
+menuentry "Debian Stretch RC 3 - 64bit Mini-Installer" {
+    set iso="/boot/iso/debian-stretch-rc3-amd64-mini.iso"
     loopback loop $iso
-    linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
-    initrd (loop)/casper/initrd.lz
+    linux (loop)/linux
+    initrd (loop)/initrd.gz
 }
+
+menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
+    set iso="/boot/iso/debian-stretch-rc3-i386-mini.iso"
+    loopback loop $iso
+    linux (loop)/linux
+    initrd (loop)/initrd.gz
+    }
+
+menuentry "BunsenLabs Deuterium (Jessie) - 64bit Installer" {
+    set iso="/boot/iso/bl-Deuterium-amd64_20170429.iso"
+    loopback loop $iso
+    linux (loop)/install/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
+    initrd /boot/debian/install.amd/initrd.gz
+    }
+
+#menuentry "BunsenLabs Deuterium - 64bit Live Mode" {
+#menuentry "BunsenLabs Deuterium - 64bit Rescue Mode" {
+
+menuentry "BunsenLabs Deuterium - 32bit NonPAE Installer" {
+    set iso="/boot/iso/bl-Deuterium-i386+NonPAE_20170429.iso"
+    loopback loop $iso
+    linux (loop)/install/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
+    initrd /boot/debian/install.386/initrd.gz
+    }
+}
+
+submenu "Ubuntu and Lubuntu ->" {
+set menu_color_normal=white/black
+set menu_color_highlight=white/green
 
 menuentry "Ubuntu 16.04 LTS - 64bit Mini-Installer" {
     set iso="/boot/iso/ubuntu-1604-amd64-mini.iso"
@@ -102,3 +121,15 @@ menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
     initrd (loop)/initrd.gz
 }
 
+menuentry "Lubuntu 16.04 - 64bit Live Mode + Desktop Installer" {
+    set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
+    loopback loop $iso
+    linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
+    initrd (loop)/casper/initrd.lz
+    }
+}
+
+# Memtest (if any)
+#menuentry "memtest86+" {
+#        linux16 /live/memtest
+#}
