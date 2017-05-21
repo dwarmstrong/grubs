@@ -21,7 +21,7 @@ set imgdevpath="/dev/disk/by-label/MULTIBOOT"
 # 'Close Encounters' (comment out to silence the tune)
 play 480 900 2 1000 2 800 2 400 2 600 3
 
-# CPU information
+# CPU information (Thanks Giles <http://gilesorr.com/>!)
 function cpu_props {
 	echo "GRUB's ability to analyse processors is limited, we can ask:"
 	echo " * is it 64/32bit?"
