@@ -34,10 +34,10 @@ function cpu_props {
     echo ""
 	if cpuid -l; then
         echo "(O<"
-		echo "(/)_ .: Processor: 64bit, PAE: $pae_assessment"
+        echo "(/)_ .: Processor: 64bit, PAE: $pae_assessment"
 	else
         echo "(O<"
-		echo "(/)_ .: Processor: 32bit, PAE: $pae_assessment"
+        echo "(/)_ .: Processor: 32bit, PAE: $pae_assessment"
 	fi
 }
 
@@ -64,7 +64,7 @@ set menu_color_highlight=white/green
 # loading ISO images.
 #
 # For a work-around ...
-# check out 'Step 3.1' of http://www.circuidipity.com/multi-boot-usb.html
+# check out http://www.circuidipity.com/multi-boot-usb.html#debian-netinst
 
 menuentry "Debian Jessie - 64bit Netinst+firmware" {
     set iso="/boot/iso/firmware-8.7.1-amd64-netinst.iso"
@@ -131,7 +131,6 @@ menuentry "SystemRescueCd 32bit" {
     }
 }
 
-
 submenu "Ubuntu and Lubuntu ->" {
 set menu_color_normal=white/black
 set menu_color_highlight=white/green
@@ -167,7 +166,7 @@ menuentry "Lubuntu 16.04 LTS - 64bit Live Mode + Desktop Installer" {
 
 # Hmm ... on my C720 Chromebook this memory tool would freeze on startup and
 # the machine required a hard reset.
-#menuentry "Memory test (memtest86+)" {
+#menuentry "Memory test (memtest86+)" --hotkey=M {
 #    linux16 /boot/iso/memtest86+-5.01.bin
 #}
 
