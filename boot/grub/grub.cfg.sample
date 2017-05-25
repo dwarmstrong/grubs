@@ -71,28 +71,28 @@ menuentry "Debian Jessie - 64bit Netinst+firmware" {
     loopback loop $iso
     linux (loop)/install.amd/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
     initrd /boot/debian/install.amd/initrd.gz
-}
+    }
 
 menuentry "Debian Jessie - 32bit Netinst+firmware" {
     set iso="/boot/iso/firmware-8.7.1-i386-netinst.iso"
     loopback loop $iso
     linux (loop)/install.386/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
     initrd /boot/debian/install.386/initrd.gz
-}
+    }
     
 menuentry "Debian Stretch RC 3 - 64bit Mini-Installer" {
     set iso="/boot/iso/debian-stretch-rc3-amd64-mini.iso"
     loopback loop $iso
     linux (loop)/linux
     initrd (loop)/initrd.gz
-}
+    }
 
 menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
     set iso="/boot/iso/debian-stretch-rc3-i386-mini.iso"
     loopback loop $iso
     linux (loop)/linux
     initrd (loop)/initrd.gz
-}
+    }
 
 #menuentry "BunsenLabs Deuterium (Jessie) - 64bit Installer" {
 #    set iso="/boot/iso/bl-Deuterium-amd64_20170429.iso"
@@ -118,7 +118,7 @@ menuentry "SystemRescueCd 64bit" {
     loopback loop $iso
     linux (loop)/isolinux/rescue64 isoloop=$iso setkmap=us
     initrd (loop)/isolinux/initram.igz
-}
+    }
 
 menuentry "SystemRescueCd 32bit" {
     set iso="/boot/iso/systemrescuecd-x86-4.9.6.iso"
@@ -137,21 +137,21 @@ menuentry "Ubuntu 16.04 LTS - 64bit Mini-Installer" {
     loopback loop $iso
     linux (loop)/linux boot=casper iso-scan/filename=$iso noprompt noeject
     initrd (loop)/initrd.gz
-}
+    }
 
 menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer" {
     set iso="/boot/iso/ubuntu-1604-i386-mini.iso"
     loopback loop $iso
     linux (loop)/linux boot=casper iso-scan/filename=$iso noprompt noeject
     initrd (loop)/initrd.gz
-}
+    }
 
 menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
     set iso="/boot/iso/ubuntu-1604-i386-mini.iso"
     loopback loop $iso
     linux (loop)/linux boot=casper iso-scan/filename=$iso noprompt noeject forcepae
     initrd (loop)/initrd.gz
-}
+    }
 
 #menuentry "Lubuntu 16.04 LTS - 64bit Live Mode + Desktop Installer" {
 #    set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
@@ -159,7 +159,7 @@ menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
 #    linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
 #    initrd (loop)/casper/initrd.lz
 #    }
-#}
+}
 
 # Hmm ... on my C720 Chromebook this memory tool would freeze on startup and
 # the machine required a hard reset.
