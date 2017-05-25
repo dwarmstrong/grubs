@@ -51,7 +51,7 @@ menuentry "Tell Me About This Machine's Processor" {
 # To use these menu entries will require separately downloading the
 # matching ISO files.
 
-submenu "Debian and BunsenLabs ->" {
+submenu "Debian ->" {
 set menu_color_normal=white/black
 set menu_color_highlight=white/green
 
@@ -92,24 +92,21 @@ menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
     loopback loop $iso
     linux (loop)/linux
     initrd (loop)/initrd.gz
-    }
+}
 
-menuentry "BunsenLabs Deuterium (Jessie) - 64bit Installer" {
-    set iso="/boot/iso/bl-Deuterium-amd64_20170429.iso"
-    loopback loop $iso
-    linux (loop)/install/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
-    initrd /boot/debian/install.amd/initrd.gz
-    }
+#menuentry "BunsenLabs Deuterium (Jessie) - 64bit Installer" {
+#    set iso="/boot/iso/bl-Deuterium-amd64_20170429.iso"
+#    loopback loop $iso
+#    linux (loop)/install/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
+#    initrd /boot/debian/install.amd/initrd.gz
+#    }
 
-#menuentry "BunsenLabs Deuterium - 64bit Live Mode" {
-#menuentry "BunsenLabs Deuterium - 64bit Rescue Mode" {
-
-menuentry "BunsenLabs Deuterium - 32bit NonPAE Installer" {
-    set iso="/boot/iso/bl-Deuterium-i386+NonPAE_20170429.iso"
-    loopback loop $iso
-    linux (loop)/install/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
-    initrd /boot/debian/install.386/initrd.gz
-    }
+#menuentry "BunsenLabs Deuterium - 32bit NonPAE Installer" {
+#    set iso="/boot/iso/bl-Deuterium-i386+NonPAE_20170429.iso"
+#    loopback loop $iso
+#    linux (loop)/install/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
+#    initrd /boot/debian/install.386/initrd.gz
+#    }
 }
 
 submenu "SystemRescueCd ->" {
@@ -131,7 +128,7 @@ menuentry "SystemRescueCd 32bit" {
     }
 }
 
-submenu "Ubuntu and Lubuntu ->" {
+submenu "Ubuntu ->" {
 set menu_color_normal=white/black
 set menu_color_highlight=white/green
 
@@ -156,13 +153,13 @@ menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
     initrd (loop)/initrd.gz
 }
 
-menuentry "Lubuntu 16.04 LTS - 64bit Live Mode + Desktop Installer" {
-    set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
-    loopback loop $iso
-    linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
-    initrd (loop)/casper/initrd.lz
-    }
-}
+#menuentry "Lubuntu 16.04 LTS - 64bit Live Mode + Desktop Installer" {
+#    set iso="/boot/iso/lubuntu-16.04.2-desktop-amd64.iso"
+#    loopback loop $iso
+#    linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$iso noprompt noeject
+#    initrd (loop)/casper/initrd.lz
+#    }
+#}
 
 # Hmm ... on my C720 Chromebook this memory tool would freeze on startup and
 # the machine required a hard reset.
