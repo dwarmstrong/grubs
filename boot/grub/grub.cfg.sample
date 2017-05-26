@@ -80,15 +80,15 @@ menuentry "Debian Jessie - 32bit Netinst+firmware" {
     initrd /boot/debian/install.386/initrd.gz
     }
     
-menuentry "Debian Stretch RC 3 - 64bit Mini-Installer" {
-    set iso="/boot/iso/debian-stretch-rc3-amd64-mini.iso"
+menuentry "Debian Stretch 2017.05.25 - 64bit Mini-Installer" {
+    set iso="/boot/iso/debian-stretch-2017.05.25-amd64-mini.iso"
     loopback loop $iso
     linux (loop)/linux
     initrd (loop)/initrd.gz
     }
 
-menuentry "Debian Stretch RC 3 - 32bit Mini-Installer" {
-    set iso="/boot/iso/debian-stretch-rc3-i386-mini.iso"
+menuentry "Debian Stretch 2017.05.25 - 32bit Mini-Installer" {
+    set iso="/boot/iso/debian-stretch-2017.05.25-i386-mini.iso"
     loopback loop $iso
     linux (loop)/linux
     initrd (loop)/initrd.gz
