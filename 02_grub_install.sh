@@ -14,10 +14,8 @@ DEVICE="/dev/$( echo "$USB_DEVICE" | cut -c -3 )"
 GRUB_CMD="$INSTALL_OPTS $BOOT_DIR $DEVICE"
 if [[ -x "grub-install" ]]; then
     sudo grub-install $GRUB_CMD
-elif [[ -x "grub2-install" ]]; then
-    sudo grub2-install $GRUB_CMD
 else
-    L_echo_red "\n$( L_penguin ) .: grub[2]-install command not found."
+    L_echo_red "\n$( L_penguin ) .: grub-install command not found."
     exit 1
 fi
 echo "Install GRUB to the Master Boot Record (MBR) of $USB_DEVICE"
