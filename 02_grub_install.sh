@@ -17,7 +17,7 @@ if [[ -x "grub-install" ]]; then
 elif [[ -x "grub2-install" ]]; then
     sudo grub2-install $GRUB_CMD
 else
-    L_echo_red "\n$( L_penguin ) .: $ERR grub[2]-install command not found."
+    L_echo_red "\n$( L_penguin ) .: grub[2]-install command not found."
     exit 1
 fi
 echo "Install GRUB to the Master Boot Record (MBR) of $USB_DEVICE"
