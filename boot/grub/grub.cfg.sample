@@ -162,10 +162,10 @@ menuentry "Ubuntu 16.04 LTS - 32bit Mini-Installer ('forcepae' for Pentium M)" {
 }
 
 # Hmm ... on my C720 Chromebook this memory tool would freeze on startup and
-# the machine required a hard reset.
-#menuentry "Memory test (memtest86+)" --hotkey=M {
-#    linux16 /boot/iso/memtest86+-5.01.bin
-#}
+# the machine required a hard reset. Reported OK on other machines.
+menuentry "Memory test (memtest86+)" --hotkey=M {
+    linux16 /boot/iso/memtest86+-5.01.bin
+}
 
 menuentry "Reboot" {
     reboot
