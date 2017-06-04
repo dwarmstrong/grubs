@@ -22,14 +22,22 @@ L_sig_ok
 SRC_BOOT="$DIR/boot"
 MNTPOINT_BOOT="$MNTPOINT/boot"
 SRC_CFG="$SRC_BOOT/grub/grub.cfg"
-MNT_CFG="$MNTPOINT_BOOT/grub/grub.cfg"
-if [[ -f "$MNT_CFG" ]]; then
-    L_bak_file $MNT_CFG
+if [[ -d $MNTPOINT_BOOT/grub ]]; then
+    MNTPOINT_GRUB="$MNTPOINT_BOOT/grub"
+elif [[ -d $MNTPOINT_BOOT/grub2 ]]; then
+    MNTPOINT_GRUB="$MNTPOINT_BOOT/grub2"
+else
+    L_echo_red "\n$( L_penguin ) .: $MNTPOINT_BOOT/grub[2] not found."
+    exit 1
+fi
+MNT_CFG="$MNTPOINT_GRUB/grub.cfg"
+if [[ -f $MNT_CFG ]]; then
     echo "Backup $MNT_CFG"
+    L_bak_file $MNT_CFG
     L_sig_ok
 fi
-cp "$SRC_CFG" "$MNT_CFG"
 echo "Copy $SRC_CFG --> $MNT_CFG"
+cp "$SRC_CFG" "$MNT_CFG"
 L_sig_ok
 
 # Read the 'RSYNC_OPT' property from '.config'
