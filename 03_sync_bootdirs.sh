@@ -24,11 +24,9 @@ MNTPOINT_BOOT="$MNTPOINT/boot"
 SRC_CFG="$SRC_BOOT/grub/grub.cfg"
 if [[ -d $MNTPOINT_BOOT/grub2 ]]; then
     MNTPOINT_GRUB="$MNTPOINT_BOOT/grub2"
-elif [[ -d $MNTPOINT_BOOT/grub ]]; then
-    MNTPOINT_GRUB="$MNTPOINT_BOOT/grub"
+    rmdir $MNTPOINT_BOOT/grub
 else
-    L_echo_red "\n$( L_penguin ) .: $MNTPOINT_BOOT/grub[2] not found."
-    exit 1
+    MNTPOINT_GRUB="$MNTPOINT_BOOT/grub"
 fi
 MNT_CFG="$MNTPOINT_GRUB/grub.cfg"
 if [[ -f $MNT_CFG ]]; then
