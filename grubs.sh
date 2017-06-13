@@ -20,6 +20,9 @@ set -eu
 # Removable USB storage device 'sd[b-z]1'
 USB_DEVICE="${*: -1}"
 
+# Grub settings
+GRUB_CONFIG="$(pwd)/boot/grub/grub.cfg"
+
 # INSTALL: Steps 0-3; UPDATE: Step 3
 STEP0="Create a FAT32 partition on $USB_DEVICE"
 STEP1="Create /boot/{grub,iso,debian} on $USB_DEVICE"
@@ -28,6 +31,7 @@ STEP3="Sync files from grubs/boot to MOUNTPOINT/boot on $USB_DEVICE"
 
 
 L_run_options "$@"
+L_test_required_file $GRUB_CONFIG   # Grub settings file in place?
 L_test_usb_device  # Verify that USB_DEVICE_PARTITION is available for use.
 L_greeting
 L_run_script

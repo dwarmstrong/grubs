@@ -102,6 +102,16 @@ _EOF_
 }
 
 
+L_test_required_file() {
+local FILE=$1
+local ERR="ERROR: file '$FILE' required but not found."
+if [[ ! -f "$FILE" ]]; then
+    L_echo_red "\n$( L_penguin ) .: $ERR"
+    exit 1
+fi
+}
+
+
 L_test_usb_device() {
 # Verify that USB_DEVICE_PARTITION is available for use.
 local ERR0
