@@ -6,6 +6,6 @@ _*
 *.md5
 *.sig
 *.txt
-SHA256SUMS
+*SHA*
 grub.cfg
 initrd.gz
