@@ -66,34 +66,20 @@ set menu_color_highlight=white/green
 # For a work-around ...
 # check out http://www.circuidipity.com/multi-boot-usb.html#debian-netinst
 
-menuentry "Debian Jessie - 64bit Netinst+firmware" {
-    set iso="/boot/iso/firmware-8.7.1-amd64-netinst.iso"
+menuentry "Debian 9 Stretch - 64bit Netinst+firmware" {
+    set iso="/boot/iso/firmware-9.0.0-amd64-netinst.iso"
     loopback loop $iso
     linux (loop)/install.amd/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
     initrd /boot/debian/install.amd/initrd.gz
     }
 
-menuentry "Debian Jessie - 32bit Netinst+firmware" {
-    set iso="/boot/iso/firmware-8.7.1-i386-netinst.iso"
+menuentry "Debian 9 Stretch - 32bit Netinst+firmware" {
+    set iso="/boot/iso/firmware-9.0.0-i386-netinst.iso"
     loopback loop $iso
     linux (loop)/install.386/vmlinuz iso-scan/ask_second_pass=true iso-scan/filename=$iso priority=low vga=normal quiet 
     initrd /boot/debian/install.386/initrd.gz
     }
     
-menuentry "Debian Stretch 2017.05.25 - 64bit Mini-Installer" {
-    set iso="/boot/iso/debian-stretch-2017.05.25-amd64-mini.iso"
-    loopback loop $iso
-    linux (loop)/linux
-    initrd (loop)/initrd.gz
-    }
-
-menuentry "Debian Stretch 2017.05.25 - 32bit Mini-Installer" {
-    set iso="/boot/iso/debian-stretch-2017.05.25-i386-mini.iso"
-    loopback loop $iso
-    linux (loop)/linux
-    initrd (loop)/initrd.gz
-    }
-
 #menuentry "BunsenLabs Deuterium (Jessie) - 64bit Installer" {
 #    set iso="/boot/iso/bl-Deuterium-amd64_20170429.iso"
 #    loopback loop $iso
